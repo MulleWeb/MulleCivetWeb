@@ -1,0 +1,3 @@
+src/civetweb/
+!src/civetweb/src/civetweb.c
+!src/civetweb/include/civetweb.h

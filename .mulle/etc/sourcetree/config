@@ -1,0 +1,2 @@
+MulleFoundation;tar;no-singlephase;EE4A10B0-5DB3-4FC6-BB1F-C5C77ED7D3BA;${MULLE_FOUNDATION_URL:-https://github.com/MulleFoundation/MulleFoundation/archive/${MULLE_TAG}.tar.gz};;${MULLE_FOUNDATION_TAG:-latest};;
+src/civetweb;${SRC_CIVETWEB_NODETYPE:-tar};no-all-load,no-build,no-header,no-import,no-link,no-share,no-singlephase;33A7C06F-8EA8-4F23-B0F7-A15497365962;${SRC_CIVETWEB_URL:-https://github.com/civetweb/civetweb/archive/${MULLE_TAG}.tar.gz};${SRC_CIVETWEB_BRANCH};${SRC_CIVETWEB_TAG:-v1.11};;
