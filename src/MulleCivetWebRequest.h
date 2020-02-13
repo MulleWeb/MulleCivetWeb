@@ -66,17 +66,18 @@ enum MulleHTTPRequestMethod
 
 - (enum MulleHTTPRequestMethod) method;
 - (NSURL *) URL;
-- (void *) info;
 - (NSString *) HTTPVersion;
-
 - (NSString *) remoteUser;
 - (NSString *) remoteIP;
-- (unsigned int) remotePort;
 - (NSUInteger) contentLength;
-- (BOOL) isSSL;
-
 - (NSDictionary *) headers;
 
+// interface into struct mg_request_info
+- (char *) URICString;
+- (char *) queryCString;
+- (void *) info;
+- (unsigned int) remotePort;
+- (BOOL) isSSL;
 - (void *) clientCertificate;
 
 @end

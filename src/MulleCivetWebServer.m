@@ -226,7 +226,7 @@ static void   mulle_mongoose_end_request( struct mg_connection *conn, int reply_
 
 
 #pragma mark -
-#pragma mark mulle-scion setup
+#pragma mark setup
 
 
 + (void) initialize
@@ -267,6 +267,13 @@ static void   mulle_mongoose_end_request( struct mg_connection *conn, int reply_
    return( [self initWithOptions:NULL]);
 }
 
+- (void) finalize
+{
+   if( _ctx)
+      mg_stop( _ctx);
+   [super finalize];
+}
+
 
 static int   log_message( const struct mg_connection *conn, const char *message)
 {
@@ -286,11 +293,6 @@ static int   log_message( const struct mg_connection *conn, const char *message)
 }
 
 
-- (void) finalize
-{
-   mg_stop( _ctx);
-   [super finalize];
-}
 
 @end
 

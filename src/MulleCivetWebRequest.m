@@ -41,6 +41,7 @@
 
 #include <signal.h>
 
+
 @implementation MulleCivetWebRequest( Private)
 
 // only to be used by the webserver
@@ -86,11 +87,36 @@
 }
 
 
+- (char *) URICString
+{
+   return( (char *) getInfo( self)->local_uri);
+}
+
+
+- (char *) queryCString
+{
+   return( (char *) getInfo( self)->query_string);
+}
+
+
+
+// if this returns nil, then the response should be 414
+// ```
+// The HTTP protocol does not place any a priori limit on the length of a URI.
+// Servers MUST be able to handle the URI of any resource they serve, and
+// SHOULD be able to handle URIs of unbounded length if they provide
+// GET-based forms that could generate such URIs. A server SHOULD return 414
+// (Request-URI Too Long) status if a URI is longer than the server can
+// handle (see section 10.4.15).
+// ```
+// I don't even know what the limit of civitweb is though...
+//
 - (NSURL *) URL
 {
    size_t                      uri_len;
    size_t                      query_len;
    struct MulleURLUTF8Parts    parts;
+   unsigned long long          len;
 
    if( _url)
       return( _url);
@@ -101,12 +127,25 @@
       return( nil);
    }
 
-   uri_len = strlen( getInfo( self)->local_uri);
-   if( uri_len >= INT_MAX / 2)
+   uri_len   = strlen( getInfo( self)->local_uri);
+   query_len = getInfo( self)->query_string ? strlen( getInfo( self)->query_string) : 0;
+
+   len = uri_len + query_len;
+   // check against overflow,
+   if( sizeof( size_t) == sizeof( unsigned long long))
    {
-      // [self log:@"overlong URI"];
-      return( nil);
+      if( len < uri_len || len < query_len)
+         return( nil);
    }
+
+   //
+   // since we already have the whole string (somewhere in memory)
+   // and we duplicate it with NSURL again...
+   // we set an arbitary limit of INT_MAX/4, which should leave
+   // INT_MAX/2 space for whatever we want to do
+   //
+   if( len >= INT_MAX/4)
+      return( nil);
 
    if( getInfo( self)->is_ssl)
    {
@@ -120,24 +159,10 @@
    }
    parts.uri_string        = (mulle_utf8_t *) getInfo( self)->local_uri;
    parts.uri_string_len    = uri_len;
-
-   query_len = getInfo( self)->query_string ? strlen( getInfo( self)->query_string) : 0;
-   if( query_len >= INT_MAX / 2)
-   {
-      // [self log:@"overlong query"];
-      return( nil);
-   }
-
    parts.query_string      = (mulle_utf8_t *)  getInfo( self)->query_string;
    parts.query_string_len  = query_len;
 
    _url = [[[NSURL alloc] mulleInitWithURLUTF8Parts:&parts] autorelease];
-   if( ! _url)
-   {
-      // [self log:@"invalid URI \"%.*s\"", (int) uri_len, getInfo( self)->local_uri];
-      return( 0);
-
-   }
    return( _url);
 }
 
@@ -156,13 +181,13 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
 
 - (NSString *) remoteUser
 {
-   return( [NSString stringWithCString:(char *) getInfo( self)->remote_user]);
+   return( [NSString stringWithUTF8String:(char *) getInfo( self)->remote_user]);
 }
 
 
 - (NSString *) remoteIP
 {
-   return( [NSString stringWithCString:(char *) getInfo( self)->remote_addr]);
+   return( [NSString stringWithUTF8String:(char *) getInfo( self)->remote_addr]);
 }
 
 
