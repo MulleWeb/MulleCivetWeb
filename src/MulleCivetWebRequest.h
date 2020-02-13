@@ -53,15 +53,19 @@ enum MulleHTTPRequestMethod
 
 
 //
+// EPHEMERAL INSTANCES, ONLY VALID IN SCOPE.DON'T COPY OR RETAIN
+//
 // the webrequest should not be retained or copied, it just lives during
 // the lifetime of the request/response cycle. It will be created by the
 // MulleCivetWebServer so don't create one.
 //
 @interface MulleCivetWebRequest : NSObject
 {
+   void           *_conn;  // struct mg_connection *
    void           *_info;  // struct mg_request_info *
    NSURL          *_url;
    NSDictionary   *_headers;
+   NSData         *_contentData;
 }
 
 - (enum MulleHTTPRequestMethod) method;
@@ -69,6 +73,7 @@ enum MulleHTTPRequestMethod
 - (NSString *) HTTPVersion;
 - (NSString *) remoteUser;
 - (NSString *) remoteIP;
+- (NSData *) contentData;
 - (NSUInteger) contentLength;
 - (NSDictionary *) headers;
 

@@ -11,6 +11,7 @@ src/civetweb/include
 )
 
 set( PRIVATE_HEADERS
+src/MulleCivetWebRequest+Private.h
 src/import-private.h
 )
 

@@ -46,11 +46,55 @@
 
 // only to be used by the webserver
 
-- (id) initWithRequestInfo:(struct mg_request_info *) info
+- (id) initWithConnection:(struct mg_connection *) conn
 {
-   _info = info;
+   struct mg_request_info   *info;
+
+   assert( conn);
+   _conn = conn;
+
+   _info = (void *) mg_get_request_info( conn);
+   assert( _info);
+
    return( self);
 }
+
+
+- (id) initWithRequestInfo:(struct mg_request_info *) info
+{
+   _info = (void *) info;
+   assert( _info);
+
+   return( self);
+}
+
+
++ (instancetype) webRequestWithServer:(MulleCivetWebServer *) server
+                                  URL:(NSURL *) url
+                              headers:(NSDictionary *) headers
+                          contentData:(NSData *) data
+{
+   // fake a request manually
+   MulleCivetWebRequest     *request;
+   struct mg_request_info   *info;
+
+   request = [NSAllocateObject( self, sizeof( struct mg_request_info), NULL) autorelease];
+   info    = MulleObjCInstanceGetExtraBytes( request);
+
+   info->request_method = "GET";
+   info->http_version   = "1.1";
+   info->content_length = -1;
+   info->remote_port    = 1848;
+   info->user_data      = server;
+
+   request->_info        = info;
+   request->_url         = url;
+   request->_headers     = headers;
+   request->_contentData = data;
+
+   return( request);
+}
+
 
 @end
 
@@ -246,6 +290,79 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
 - (NSString *) HTTPVersion
 {
    return( [NSString stringWithUTF8String:(char *) getInfo( self)->http_version]);
+}
+
+
+// TODO: use a mulle_buffer instead for partial read/writes ?
+- (NSData *) contentData
+{
+   NSMutableData   *data;
+   NSUInteger      length;
+   uint8_t         *buf;
+   int             read_len;
+   int             rval;
+   BOOL            haveContentLength;
+   NSUInteger      offset;
+
+   if( _contentData)
+      return( _contentData);
+
+   //
+   // if we get a contentLength we read up till it,
+   // otherwise we read as much as we can
+   //
+   length            = [self contentLength];
+   haveContentLength = (length != (NSUInteger) -1);
+   if( ! haveContentLength)
+      length = 0x1000;
+
+   if( length >= INT_MAX)
+      return( nil);
+   if( ! length)
+      return( [NSData data]);
+
+   data   = [NSMutableData mulleNonZeroedDataWithLength:length];
+   offset = 0;
+
+   for(;;)
+   {
+      //
+      //    0     connection has been closed by peer. No more data could be read.
+      //   <0   read error. No more data could be read from the connection.
+      //   > 0   number of bytes read into the buffer.
+      // mg_read does the chunking for us
+      //
+      buf      = [data mutableBytes];
+      read_len = mg_read( _conn, &buf[ offset], length);
+      if( read_len < 0)
+         return( nil);
+
+      if( read_len == length)
+      {
+         if( haveContentLength)
+         {
+            _contentData = data;
+            return( data);
+         }
+      }
+      else
+      {
+         if( haveContentLength)  // did not match expectation
+            return( nil);
+
+         if( read_len == 0)
+         {
+            // reduce our buffer
+            [data mulleSetLengthDontZero:[data length] - length];
+            _contentData = data;
+            return( data);
+         }
+      }
+
+      // adjust data so we can read "length" bytes again
+      [data mulleSetLengthDontZero:[data length] + read_len];
+      offset += read_len;
+   }
 }
 
 

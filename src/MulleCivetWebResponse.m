@@ -40,10 +40,10 @@
 #include "civetweb.h"
 
 
-NSString  *MulleCivetWebDateKey          = @"Date";
-NSString  *MulleCivetWebContentTypeKey   = @"Content-Type";
-NSString  *MulleCivetWebContentLengthKey = @"Content-Length";
-
+NSString  *MulleCivetWebDateKey             = @"Date";
+NSString  *MulleCivetWebContentTypeKey      = @"Content-Type";
+NSString  *MulleCivetWebContentLengthKey    = @"Content-Length";
+NSString  *MulleCivetWebTransferEncodingKey = @"Transfer-Encoding";
 
 @implementation MulleCivetWebResponse
 

@@ -49,9 +49,12 @@
 @class MulleCivetWebResponse;
 
 
+
+// move elsewhere
 extern NSString  *MulleCivetWebDateKey;          // @"Date"
 extern NSString  *MulleCivetWebContentTypeKey;   // @"Content-Type"
 extern NSString  *MulleCivetWebContentLengthKey; // @"Content-Length
+extern NSString  *MulleCivetWebTransferEncodingKey; // @"Transfer-Encoding
 
 
 //

@@ -32,20 +32,15 @@
    NSURL                      *url;
    NSString                   *key;
    NSDictionary               *headers;
-   NSData                     *contentData;
 
-   response    = [MulleCivetWebTextResponse webResponseForWebRequest:request];
-   url         = [request URL];
-   contentData = [request contentData];
+   response = [MulleCivetWebTextResponse webResponseForWebRequest:request];
+   url      = [request URL];
    [response setDate:[NSDate dateWithTimeIntervalSinceReferenceDate:0]];
 
    [response appendLine:@"Reply"];
    [response appendLine:@"---------------------"];
    [response appendString:@"URL: "];
    [response appendLine:[url description]];
-   [response appendString:@"Content: "];
-   [response appendLine:[NSString mulleStringWithData:contentData
-                                             encoding:NSUTF8StringEncoding]];
 
    headers = [request headers];
    for( key in headers)
@@ -68,24 +63,28 @@ int   main( int argc, char *argv[])
 {
    TestWebServer              *server;
    MulleCivetWebRequest       *request;
-   NSData                     *contentData;
    struct mg_request_info     info;
    int                        rval;
 
    server = [TestWebServer object];
    [server setRequestHandler:server];
 
-   contentData = [@"VfL Bochum 1848" dataUsingEncoding:NSUTF8StringEncoding];
+   // fake a request manually
+   memset( &info, 0, sizeof( info));
+   info.request_method = "GET";
+   info.local_uri      = "/foo";
+   info.http_version   = "1.1";
+   info.content_length = -1;
+   info.remote_port    = 1848;
+   info.user_data      = server;
 
-   request = [MulleCivetWebRequest webRequestWithServer:server
-                                                    URL:[NSURL URLWithString:@"/foo"]
-                                                headers:@{
-                                                            MulleCivetWebContentTypeKey: @"text/plain; charset=utf-8",
-                                                            MulleCivetWebContentLengthKey: [NSString stringWithFormat:@"%ld", [contentData length]]
-                                                         }
-                                            contentData:contentData];
+   info.num_headers    = 2;
+   info.http_headers[ 0].name  = "Content-Type";
+   info.http_headers[ 0].value = "text/plain; charset=utf-8";
+   info.http_headers[ 1].name  = "Content-Length";
+   info.http_headers[ 1].value = "-1";
 
-
+   request = [[[MulleCivetWebRequest alloc] initWithRequestInfo:&info] autorelease];
    rval    = [server handleWebRequest:request];
    printf( "%d\n", rval);
 }

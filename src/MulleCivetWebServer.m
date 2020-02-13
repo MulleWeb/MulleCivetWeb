@@ -167,7 +167,7 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn, void *p_
 
    @autoreleasepool
    {
-      request = [[[MulleCivetWebRequest alloc] initWithRequestInfo:info] autorelease];
+      request = [[[MulleCivetWebRequest alloc] initWithConnection:conn] autorelease];
       @try
       {
          rval = [server handleWebRequest:request];

@@ -24,7 +24,7 @@ static void   test_noleak( void)
    {
       @try
       {
-         obj = [[[MulleCivetWebRequest alloc] initWithRequestInfo:NULL] autorelease];
+         obj = [[[MulleCivetWebRequest alloc] initWithRequestInfo:(void *) 1848] autorelease];
          if( ! obj)
          {
             fprintf( stderr, "failed to allocate\n");
