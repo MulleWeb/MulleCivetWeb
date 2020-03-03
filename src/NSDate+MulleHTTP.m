@@ -1,5 +1,5 @@
 //
-//  MulleCivetWebServer.m
+//  NSDate+MulleHTTP.m
 //  MulleCivetWeb
 //
 //  Created by Nat! on 02.02.20.
@@ -33,56 +33,60 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
-#import "import.h"
+
+#import "NSDate+MulleHTTP.h"
 
 
-@class MulleCivetWebResponse;
-@class MulleCivetWebRequest;
-@class MulleCivetWebResponse;
-@class MulleCivetWebServer;
+@implementation NSDate( MulleHTTP)
 
-
-@protocol MulleCivetWebRequestHandler
-
-// maybe too much web here ? :)
-
- - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
-              webResponseForWebRequest:(MulleCivetWebRequest *) request;
-
- @optional
- - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
-               webResponseForException:(NSException *) exception
-                      duringWebRequest:(MulleCivetWebRequest *) request;
-
-@end
-
-//
-// the webserver gets requests via civetweb, usually it dispatches them
-// to the requestHandler which should fill in the response
-//
-@interface MulleCivetWebServer : NSObject
+static struct
 {
-   void   *_ctx;
-   char   _server_name[ 80];
-   char   _isReady;
+   mulle_atomic_pointer_t   _formatter;
+} Self;
+
+
++ (void) unload
+{
+   @autoreleasepool
+   {
+      [(id) _mulle_atomic_pointer_nonatomic_read( &Self._formatter) release];
+   }
 }
 
-@property( assign) id <MulleCivetWebRequestHandler>   requestHandler;
 
-// options: like civetweb accepts
-- (instancetype) initWithCStringOptions:(char **) options;
+static NSDateFormatter  *getHTTPDateFormatter( void)
+{
+   NSDateFormatter  *formatter;
 
-- (BOOL) isReady;
+   /*
+    * Cache
+    */
+   formatter = (NSDateFormatter *) _mulle_atomic_pointer_read( &Self._formatter);
+   if( ! formatter)
+   {
+      formatter = [[NSDateFormatter new] autorelease];
+      [formatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US"]];
+   // http://tools.ietf.org/html/rfc2616#section-3.3
+      [formatter setDateFormat:@"%a, %d %b %Y %H:%M:%S GMT"];
+      [formatter setTimeZone:[NSTimeZone mulleGMTTimeZone]];
+
+      // if
+      mulle_atomic_memory_barrier();
+      if( _mulle_atomic_pointer_cas( &Self._formatter, formatter, NULL))
+         [formatter retain];
+   }
+   return( formatter);
+}
 
 
-// you can override this, or plop in a requestHandler
-- (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request;
+- (NSString *) mulleHTTPDescription
+{
+// Sun, 06 Nov 1994 08:49:37 GMT
+   NSDateFormatter  *formatter;
 
-- (NSArray *) openPortInfos;
+   formatter = getHTTPDateFormatter();
+   return( [formatter stringFromDate:self]);
+}
 
 @end
-
-
-
-
 

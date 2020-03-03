@@ -39,32 +39,18 @@
 @class MulleCivetWebRequest;
 
 
-@protocol MulleCivetWebResponse
-
-- (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding;
-- (NSData *) contentData;
-- (NSUInteger) status;
-- (NSDate *) date;  // return nil
-@end
-@class MulleCivetWebResponse;
-
-
-
-// move elsewhere
-extern NSString  *MulleCivetWebDateKey;          // @"Date"
-extern NSString  *MulleCivetWebContentTypeKey;   // @"Content-Type"
-extern NSString  *MulleCivetWebContentLengthKey; // @"Content-Length
-extern NSString  *MulleCivetWebTransferEncodingKey; // @"Transfer-Encoding
-
-
 //
 // abstract class: use a subclass that implements contentData
+// The WebResponse has the connection of the WebServer, it sends
+// itself back. You cant't copy or retain a WebResponse, since
+// the _connection is gone after the response is through
 //
-@interface MulleCivetWebResponse : NSObject <MulleCivetWebResponse>
+@interface MulleCivetWebResponse : NSObject
 {
    NSString              *_httpVersion;
    NSMutableArray        *_orderedHeaderKeys;
    NSMutableDictionary   *_headers;
+   void                  *_connection;
 }
 
 @property( assign) NSUInteger  status;
@@ -72,13 +58,26 @@ extern NSString  *MulleCivetWebTransferEncodingKey; // @"Transfer-Encoding
 @property( retain) NSData      *contentData;
 @property( retain) NSDate      *date;  // useful for testing (usually nil)
 
-// use this to create a reponse
+// use this to create a response, request can't be nil
 + (instancetype) webResponseForWebRequest:(MulleCivetWebRequest *) request;
 
-// designated initializer
-- (instancetype) initWithHTTPVersion:(NSString *) s;
+
+// sending the response back
+- (BOOL) sendHeaderData;
+// sending the content back
+- (BOOL) sendContentData;
+
+// sendChunkedContentData will clear contentData, you can fill up again
+// and call this again (be sure to add "chunked" to the TransferEncodings
+// before sending the header
+- (BOOL) sendChunkedContentData;
 
 - (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding;
+
+- (void) addToTransferEncodings:(NSString *) s;
+- (BOOL) containsTransferEncoding:(NSString *) s;
+
+- (void) clearContentData;
 
 @end
 

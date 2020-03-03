@@ -42,7 +42,7 @@ The request handler will receive `MulleCivetWebRequests` and return
 
    response = [MulleCivetWebTextResponse webResponseForWebRequest:request];
    [response setObject:@"text/plain"
-                forKey:MulleCivetWebContentTypeKey];
+                forKey:MulleHTTPContentTypeKey];
 
    [response appendString:@"Hello World"];
    return( response);

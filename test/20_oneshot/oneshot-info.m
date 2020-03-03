@@ -4,34 +4,45 @@
 #include <MulleCivetWeb/civetweb.h>
 
 
-@interface TestWebServer : MulleCivetWebServer <MulleCivetWebRequestHandler>
+
+@implementation MulleCivetWebResponse ( Test)
+
+- (void) sendHeaderData
+{
+   NSData   *headerData;
+
+   headerData = [self headerDataUsingEncoding:NSUTF8StringEncoding];
+   printf( "%.*s", (int) [headerData length], [headerData bytes]);
+}
+
+- (void) sendContentData
+{
+   NSData   *contentData;
+
+   contentData = [self contentData];
+   printf( "%.*s", (int) [contentData length], [contentData bytes]);
+
+}
+
 @end
 
 
-@implementation TestWebServer
-
-- (void) writeWebResponse:(id <MulleCivetWebResponse>) response
-               onlyHeader:(BOOL) onlyHeader
-{
-   NSData   *headerData;
-   NSData   *contentData;
-
-   headerData = [response headerDataUsingEncoding:NSUTF8StringEncoding];
-   printf( "%.*s", (int) [headerData length], [headerData bytes]);
-   if( onlyHeader)
-      return;
-
-   contentData = [response contentData];
-   printf( "%.*s", (int) [contentData length], [contentData bytes]);
-}
+@interface RequestHandler : NSObject <MulleCivetWebRequestHandler>
+@end
 
 
-- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request
+@implementation RequestHandler
+
+
+- (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
+             webResponseForWebRequest:(MulleCivetWebRequest *) request
 {
    MulleCivetWebTextResponse  *response;
    NSURL                      *url;
    NSString                   *key;
    NSDictionary               *headers;
+   NSDictionary               *parameterDict;
+   NSDictionary               *queryDict;
 
    response = [MulleCivetWebTextResponse webResponseForWebRequest:request];
    url      = [request URL];
@@ -42,6 +53,23 @@
    [response appendString:@"URL: "];
    [response appendLine:[url description]];
 
+   parameterDict = [url mulleParameterDictionary];
+   for( key in parameterDict)
+   {
+      [response appendString:@"Parameter :"];
+      [response appendString:key];
+      [response appendString:@"="];
+      [response appendLine:[parameterDict objectForKey:key]];
+   }
+
+   queryDict = [url mulleQueryDictionary];
+   for( key in queryDict)
+   {
+      [response appendString:@"Query : "];
+      [response appendString:key];
+      [response appendString:@"="];
+      [response appendLine:[queryDict objectForKey:key]];
+   }
    headers = [request headers];
    for( key in headers)
    {
@@ -61,18 +89,20 @@
 
 int   main( int argc, char *argv[])
 {
-   TestWebServer              *server;
+   MulleCivetWebServer        *server;
+   RequestHandler             *handler;
    MulleCivetWebRequest       *request;
    struct mg_request_info     info;
    int                        rval;
 
-   server = [TestWebServer object];
-   [server setRequestHandler:server];
+   server  = [MulleCivetWebServer object];
+   handler = [RequestHandler object];
+   [server setRequestHandler:handler];
 
    // fake a request manually
    memset( &info, 0, sizeof( info));
    info.request_method = "GET";
-   info.local_uri      = "/foo";
+   info.local_uri      = "/foo%20bar;param1;param2=OK?name=foo%20bar";
    info.http_version   = "1.1";
    info.content_length = -1;
    info.remote_port    = 1848;
@@ -87,4 +117,8 @@ int   main( int argc, char *argv[])
    request = [[[MulleCivetWebRequest alloc] initWithRequestInfo:&info] autorelease];
    rval    = [server handleWebRequest:request];
    printf( "%d\n", rval);
+
+   [server mullePerformFinalize];
+
+   return( 0);
 }

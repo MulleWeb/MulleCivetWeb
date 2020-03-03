@@ -24,7 +24,8 @@ static void   test_noleak( void)
    {
       @try
       {
-         obj = [[[MulleCivetWebResponse alloc] initWithHTTPVersion:nil] autorelease];
+         obj = [[[MulleCivetWebResponse alloc] initWithHTTPVersion:nil
+                                                        connection:(void *) 0x1848] autorelease];
          if( ! obj)
          {
             fprintf( stderr, "failed to allocate\n");

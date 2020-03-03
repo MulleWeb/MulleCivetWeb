@@ -1,11 +1,11 @@
 HTTP/1.1 200 OK
-Date: 01-01-01T00:00:00Z+0000
+Date: Mon, 01 Jan 2001 00:00:00 GMT
 Content-Type: text/plain; charset=utf-8
-Content-Length: 166
+Content-Length: 165
 
 Reply
 ---------------------
-URL: //foo
+URL: /foo
 Content: VfL Bochum 1848
 Header Content-Type: text/plain; charset=utf-8
 Header Content-Length: 15

@@ -1,5 +1,5 @@
 //
-//  MulleCivetWebServer.m
+//  NSDate+MulleHTTP.h
 //  MulleCivetWeb
 //
 //  Created by Nat! on 02.02.20.
@@ -36,53 +36,9 @@
 #import "import.h"
 
 
-@class MulleCivetWebResponse;
-@class MulleCivetWebRequest;
-@class MulleCivetWebResponse;
-@class MulleCivetWebServer;
+@interface NSDate( MulleHTTP)
 
-
-@protocol MulleCivetWebRequestHandler
-
-// maybe too much web here ? :)
-
- - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
-              webResponseForWebRequest:(MulleCivetWebRequest *) request;
-
- @optional
- - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
-               webResponseForException:(NSException *) exception
-                      duringWebRequest:(MulleCivetWebRequest *) request;
+// Sun, 06 Nov 1994 08:49:37 GMT
+- (NSString *) mulleHTTPDescription;
 
 @end
-
-//
-// the webserver gets requests via civetweb, usually it dispatches them
-// to the requestHandler which should fill in the response
-//
-@interface MulleCivetWebServer : NSObject
-{
-   void   *_ctx;
-   char   _server_name[ 80];
-   char   _isReady;
-}
-
-@property( assign) id <MulleCivetWebRequestHandler>   requestHandler;
-
-// options: like civetweb accepts
-- (instancetype) initWithCStringOptions:(char **) options;
-
-- (BOOL) isReady;
-
-
-// you can override this, or plop in a requestHandler
-- (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request;
-
-- (NSArray *) openPortInfos;
-
-@end
-
-
-
-
-

@@ -10,6 +10,10 @@ src/MulleCivetWebRequest.m
 src/MulleCivetWebResponse.m
 src/MulleCivetWebServer.m
 src/MulleCivetWeb.m
+src/NSDate+MulleHTTP.m
+src/NSString+ListComponents.m
+src/NSURL+MulleCivetWeb.m
+src/NSURL+NSDictionary.m
 src/civetweb/src/civetweb.c
 )
 

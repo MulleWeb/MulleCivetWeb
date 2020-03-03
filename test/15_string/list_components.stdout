@@ -1,0 +1,27 @@
+s= component=nil separator=nil range = { NSNotFound, 0 } added= removed= 
+s= component= separator=nil range = { NSNotFound, 0 } added= removed= 
+
+s= component=nil separator= range = { NSNotFound, 0 } added= removed= 
+s= component= separator= range = { NSNotFound, 0 } added= removed= 
+
+s= component=nil separator=, range = { NSNotFound, 0 } added=nil removed= 
+s= component= separator=, range = { NSNotFound, 0 } added= removed= 
+
+s= component=a separator=, range = { NSNotFound, 0 } added=a removed= 
+s=a component= separator=, range = { NSNotFound, 0 } added=a, removed=a 
+s=a component=a separator=, range = { 0, 1 } added=a removed= 
+s=a component=b separator=, range = { NSNotFound, 0 } added=a,b removed=a 
+s=a,b component=c separator=, range = { NSNotFound, 0 } added=a,b,c removed=a,b 
+s=a,b,c component= separator=, range = { NSNotFound, 0 } added=a,b,c, removed=a,b,c 
+s=a,b,c component=a separator=, range = { 0, 1 } added=a,b,c removed=b,c 
+s=a,b,c component=b separator=, range = { 2, 1 } added=a,b,c removed=a,c 
+s=a,b,c component=c separator=, range = { 4, 1 } added=a,b,c removed=a,b 
+s=a,b,c component=d separator=, range = { NSNotFound, 0 } added=a,b,c,d removed=a,b,c 
+
+s=a--b component=c separator=-- range = { NSNotFound, 0 } added=a--b--c removed=a--b 
+s=a--b--c component= separator=-- range = { NSNotFound, 0 } added=a--b--c-- removed=a--b--c 
+s=a--b--c component=a separator=-- range = { 0, 1 } added=a--b--c removed=b--c 
+s=a--b--c component=b separator=-- range = { 3, 1 } added=a--b--c removed=a--c 
+s=a--b--c component=c separator=-- range = { 6, 1 } added=a--b--c removed=a--b 
+s=a--b--c component=d separator=-- range = { NSNotFound, 0 } added=a--b--c--d removed=a--b--c 
+

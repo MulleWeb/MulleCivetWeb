@@ -36,19 +36,33 @@
 #import "MulleCivetWebResponse.h"
 
 #import "MulleCivetWebRequest.h"
+#import "MulleCivetWebRequest+Private.h"
+#import "MulleHTTP.h"
+#import "NSDate+MulleHTTP.h"
+#import "NSString+ListComponents.h"
 
 #include "civetweb.h"
 
 
-NSString  *MulleCivetWebDateKey             = @"Date";
-NSString  *MulleCivetWebContentTypeKey      = @"Content-Type";
-NSString  *MulleCivetWebContentLengthKey    = @"Content-Length";
-NSString  *MulleCivetWebTransferEncodingKey = @"Transfer-Encoding";
-
 @implementation MulleCivetWebResponse
 
-- (instancetype) initWithHTTPVersion:(NSString *) s
+- (id) init
 {
+   abort();
+}
+
+
+- (instancetype) initWithHTTPVersion:(NSString *) s
+                          connection:(void *) connection
+{
+   if( ! connection)
+   {
+      [self release];
+      return( nil);
+   }
+
+   _connection        = connection;
+
    if( ! s)
       s = @"1.1";
 
@@ -62,15 +76,20 @@ NSString  *MulleCivetWebTransferEncodingKey = @"Transfer-Encoding";
 }
 
 
-- (instancetype) init
+- (instancetype) initWithConnection:(void *) connection
 {
-   return( [self initWithHTTPVersion:nil]);
+   return( [self initWithHTTPVersion:nil
+                          connection:connection]);
 }
 
 
 + (instancetype) webResponseForWebRequest:(MulleCivetWebRequest *) request
 {
-   return( [[[self alloc] initWithHTTPVersion:[request HTTPVersion]] autorelease]);
+   MulleCivetWebResponse   *response;
+
+   response = [[[self alloc] initWithHTTPVersion:[request HTTPVersion]
+                                      connection:[request connection]] autorelease];
+   return( response);
 }
 
 
@@ -81,6 +100,13 @@ NSString  *MulleCivetWebTransferEncodingKey = @"Transfer-Encoding";
    [_orderedHeaderKeys release];
 
    [super dealloc];
+}
+
+
+// struct mg_connection
+- (void *) connection
+{
+   return( _connection);
 }
 
 
@@ -110,6 +136,13 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 }
 
 
+- (void) clearContentData
+{
+   [_contentData autorelease];
+   _contentData = nil;
+}
+
+
 - (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding
 {
    NSMutableData   *data;
@@ -133,24 +166,24 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
 
    // do some standard headers
-   key   = MulleCivetWebDateKey;
+   key   = MulleHTTPDateKey;
    value = [_headers objectForKey:key];
    if( ! value)
    {
       date  = _date ? _date : [NSDate date];
-      value = [date description];
+      value = [date mulleHTTPDescription];
    }
    [_orderedHeaderKeys removeObject:key];
    appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);
 
-   key   = MulleCivetWebContentTypeKey;
+   key   = MulleHTTPContentTypeKey;
    value = [_headers objectForKey:key];
    if( ! value)
       value = @"text/plain; charset=utf-8";
    [_orderedHeaderKeys removeObject:key];
    appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);
 
-   key   = MulleCivetWebContentLengthKey;
+   key   = MulleHTTPContentLengthKey;
    value = [_headers objectForKey:key];
    if( ! value)
       value = [NSString stringWithFormat:@"%lu", (unsigned long) contentLength];
@@ -168,6 +201,107 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    return( data);
 }
 
+
+- (BOOL) sendHeaderData
+{
+   NSData   *data;
+   int      rval;
+
+   data = [self headerDataUsingEncoding:NSUTF8StringEncoding];
+   rval = mg_write( _connection, [data bytes], [data length]);
+
+   return( rval == -1 ? NO : YES);
+}
+
+
+- (BOOL) sendChunkedContentData
+{
+   NSData       *data;
+   void         *bytes;
+   NSUInteger   length;
+   int          rval;
+
+   data   = [self contentData];
+   length = [data length];
+   if( ! length)
+      return( YES);
+
+   bytes = [data bytes];
+   rval  = mg_send_chunk( _connection, bytes, length);
+
+   [self clearContentData];
+
+   return( rval == -1 ? NO : YES);
+}
+
+
+- (BOOL) sendContentData
+{
+   NSData                 *data;
+   void                   *bytes;
+   NSUInteger             length;
+   int                    rval;
+
+   data   = [self contentData];
+   length = [data length];
+   if( ! length)
+      return( YES);
+
+   bytes = [data bytes];
+   rval  = mg_write( _connection, bytes, length);
+
+   return( rval == -1 ? NO : YES);
+}
+
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
+// Transfer-Encoding: chunked
+// Transfer-Encoding: compress
+// Transfer-Encoding: deflate
+// Transfer-Encoding: gzip
+// Transfer-Encoding: identity
+
+- (void) addToTransferEncodings:(NSString *) s
+{
+   NSString         *value;
+   BOOL             contains;
+   NSMutableArray   *array;
+
+   value = [_headers objectForKey:MulleHTTPTransferEncodingKey];
+   if( ! value)
+      value = s;
+   else
+      value = [value mulleStringByAddingListComponent:s
+                                            separator:@","]; // check for dupe
+   [_headers setObject:value
+                forKey:MulleHTTPTransferEncodingKey];
+}
+
+
+- (BOOL) containsTransferEncoding:(NSString *) s
+{
+   NSString   *value;
+
+   value = [_headers objectForKey:MulleHTTPTransferEncodingKey];
+   return( [value mulleRangeOfListComponent:s
+                                  separator:@","].length != 0);
+}
+
+
+
+#ifdef DEBUG
+- (id) retain
+{
+   abort();
+}
+
+
+- (id) copy
+{
+   abort();
+}
+#endif
+
 @end
 
 
@@ -175,8 +309,10 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 @implementation MulleCivetWebTextResponse
 
 - (instancetype) initWithHTTPVersion:(NSString *) s
+                          connection:(struct mg_connection *) connection
 {
-   self = [super initWithHTTPVersion:s];
+   self = [super initWithHTTPVersion:s
+                          connection:connection];
    if( self)
    {
       _content = [NSMutableString new];
@@ -217,6 +353,13 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
       [self setContentData:data];
    }
    return( data);
+}
+
+
+- (void) clearContentData
+{
+   [_content setString:@""];
+   [super clearContentData];
 }
 
 @end

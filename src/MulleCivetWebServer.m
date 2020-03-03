@@ -38,13 +38,68 @@
 #import "MulleCivetWebRequest.h"
 #import "MulleCivetWebRequest+Private.h"
 #import "MulleCivetWebResponse.h"
+#import "MulleCivetWebResponse+Private.h"
+#import "MulleHTTP.h"
 
 #include "civetweb.h"
 
 
 @implementation MulleCivetWebServer
 
-/* this code is just for demo purposes. */
+#pragma mark -
+#pragma mark setup
+
+
++ (void) initialize
+{
+   mg_init_library( 0);
+}
+
+
+- (instancetype) initWithCStringOptions:(char **) options
+{
+   struct mg_callbacks   callbacks;
+   NSString              *dir;
+   char                  **p;
+
+   /* Start Mongoose */
+   memset( &callbacks, 0, sizeof(callbacks));
+
+   snprintf( _server_name, sizeof( _server_name), "MulleCivetWeb (civetweb v. %.32s)",
+            mg_version());
+
+   callbacks.log_message   = &log_message;
+   callbacks.begin_request = mulle_mongoose_begin_request;
+   callbacks.end_request   = (void *) mulle_mongoose_end_request;
+   callbacks.init_thread   = mulle_mongoose_did_init_thread;
+   callbacks.exit_thread   = mulle_mongoose_did_exit_thread;
+
+   _ctx = mg_start( &callbacks, self, (void *) options);
+   if( ! _ctx)
+   {
+      [self release];
+      return( nil);
+   }
+   mg_set_request_handler( _ctx, "/", mulle_mongoose_handle_request, self);
+   return( self);
+}
+
+
+- (instancetype) init
+{
+   return( [self initWithCStringOptions:NULL]);
+}
+
+
+- (void) finalize
+{
+   if( _ctx)
+      mg_stop( _ctx);
+   [super finalize];
+}
+
+
+
 #pragma mark -
 #pragma mark ObjC Interfacing
 
@@ -72,79 +127,58 @@
 }
 
 
-- (MulleCivetWebResponse *) webResponse404ForWebRequest:(MulleCivetWebRequest *) request
+- (MulleCivetWebResponse *) webResponseForError:(NSUInteger) code
+                               errorDescription:(NSString *) errorDescription
+                                  forWebRequest:(MulleCivetWebRequest *) request
 {
    MulleCivetWebTextResponse   *textResponse;
 
    textResponse = [MulleCivetWebTextResponse webResponseForWebRequest:request];
-   [textResponse appendString:@"Nothing here"];
-   [textResponse setStatus:404];
+   [textResponse appendString:errorDescription];
+   [textResponse setStatus:code];
    return( textResponse);
-}
-
-
-- (NSUInteger) handleException:(NSException *) exception
-              duringWebRequest:(MulleCivetWebRequest *) request
-{
-   MulleCivetWebResponse   *response;
-
-   response = nil;
-   if( _requestHandler && [(id) _requestHandler respondsToSelector:_cmd])
-      response = [_requestHandler webResponseForException:exception
-                                         duringWebRequest:request];
-
-   if( ! response)
-      response = [self webResponseForException:exception
-                              duringWebRequest:request];
-
-   [self writeWebResponse:response
-               onlyHeader:NO];
-
-   return( [response status]);
-}
-
-
-- (void) writeWebResponse:(id <MulleCivetWebResponse>) response
-               onlyHeader:(BOOL) onlyHeader
-{
-   NSData   *headerData;
-   NSData   *contentData;
-
-   headerData = [response headerDataUsingEncoding:NSUTF8StringEncoding];
-   mg_write( _ctx, [headerData bytes], [headerData length]);
-   if( onlyHeader)
-      return;
-
-   contentData = [response contentData];
-   mg_write( _ctx, [contentData bytes], [contentData length]);
 }
 
 
 - (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request
 {
-   id <MulleCivetWebResponse>  response;
+   MulleCivetWebResponse   *response;
 
-   //
-   // ok so we get the URL and then peruse our dataSource
-   // using valueForKeyPath:options:
-   //
-   if( _requestHandler)
+   @try
    {
-      response = [_requestHandler webResponseForWebRequest:request];
+      if( _requestHandler)
+      {
+         response = [_requestHandler webServer:self
+                      webResponseForWebRequest:request];
+
+         // nil means the handler sent the response itself, possibly
+         // chunked. So assume it went OK. If the chunking fails, the
+         // handler shouldn't raise, because this would just resend the
+         // header
+         if( ! response)
+            return( 200);
+      }
+      else
+      {
+         response = [self webResponseForError:404
+                             errorDescription:@"Nothing here"
+                                forWebRequest:request];
+      }
    }
-   else
+   @catch( NSException *localException)
    {
-      response = [self webResponse404ForWebRequest:request];
-      // send a 404
+      response = [self webResponseForException:localException
+                              duringWebRequest:request];
    }
 
    NSCParameterAssert( response);
-   [self writeWebResponse:response
-               onlyHeader:[request method] == MulleHTTPHead];
+
+   [response sendHeaderData];
+   if( [request method] != MulleHTTPHead)
+      [response sendContentData];
 
    return( [response status]);
 }
-
 
 
 //
@@ -165,18 +199,13 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn, void *p_
    info   = (void *) mg_get_request_info( conn);
    server = p_server;
 
+   // need to use this instead of @autoreleasepool, since
+   // this thread may not have been setup for Objective-C yet
+
    @autoreleasepool
    {
       request = [[[MulleCivetWebRequest alloc] initWithConnection:conn] autorelease];
-      @try
-      {
-         rval = [server handleWebRequest:request];
-      }
-      @catch( NSException *localException)
-      {
-         rval = [server handleException:localException
-                       duringWebRequest:request];
-      }
+      rval    = [server handleWebRequest:request];
    }
 
    assert( rval >= 0 && rval <= 999);
@@ -184,106 +213,93 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn, void *p_
 }
 
 
-- (int) beginWithRequestInfo:(struct mg_request_info *) request_info
-                  connection:(struct mg_connection *) conn
+- (int) beginRequestWithConnection:(struct mg_connection *) conn
 {
-   return( 1);
+   struct mg_request_info   *info;
+
+   info = (void *) mg_get_request_info( conn);
+
+   return( 0);
 }
 
 
 static int   mulle_mongoose_begin_request( struct mg_connection *conn)
 {
    MulleCivetWebServer     *server;
-   struct mg_request_info  *info;
 
-   info   = (void *) mg_get_request_info( conn);
-   server = mg_get_user_data( (void *) conn);
-
-   return( [server beginWithRequestInfo:info
-                             connection:conn]);
+   server = mg_get_user_context_data( conn);
+   // should check that the current thread is a mulle-objc thread,
+   // if not make it one (create a NSThread object for it ?)
+   return( [server beginRequestWithConnection:conn]);
 }
 
 
-- (void) endWithRequestInfo:(struct mg_request_info *) request_info
-                 connection:(struct mg_connection *) conn
-                       code:(int) code
+- (void) endRequestWithConnection:(struct mg_connection *) conn
+                            code:(int) code
 {
+   struct mg_request_info   *info;
+
+   info = (void *) mg_get_request_info( conn);
 }
 
 
 static void   mulle_mongoose_end_request( struct mg_connection *conn, int reply_status_code)
 {
-   MulleCivetWebServer     *server;
-   struct mg_request_info  *info;
+   MulleCivetWebServer      *server;
 
-   info   = (void *) mg_get_request_info( conn);
-   server = mg_get_user_data( (void *) conn);
-
-   [server endWithRequestInfo:info
-                   connection:conn
-                         code:reply_status_code];
+   server = mg_get_user_context_data( conn);
+   [server endRequestWithConnection:conn
+                               code:reply_status_code];
 }
 
 
-#pragma mark -
-#pragma mark setup
-
-
-+ (void) initialize
+- (volatile BOOL) isReady
 {
-   mg_init_library( 0);
+   return( _isReady);
 }
 
 
-- (instancetype) initWithOptions:(char **) options
+static void  *
+   mulle_mongoose_did_init_thread( const struct mg_context *ctx, int thread_type )
 {
-   struct mg_callbacks   callbacks;
-   NSString              *dir;
-   char                  **p;
+   MulleCivetWebServer   *server;
+   void                  *pool;
 
-   /* Start Mongoose */
-   memset( &callbacks, 0, sizeof(callbacks));
-
-   snprintf( _server_name, sizeof( _server_name), "MulleCivetWeb (civetweb v. %.32s)",
-            mg_version());
-
-   callbacks.log_message   = &log_message;
-   callbacks.begin_request = mulle_mongoose_begin_request;
-   callbacks.end_request   = (void *) mulle_mongoose_end_request;
-
-   _ctx = mg_start( &callbacks, self, (void *) options);
-   if( ! _ctx)
+   if( thread_type == 0)
    {
-      [self release];
-      return( nil);
+      server = mg_get_user_data( ctx);
+      server->_isReady = YES;
    }
-   mg_set_request_handler( _ctx, "/", mulle_mongoose_handle_request, self);
-   return( self);
+
+   pool = MulleAutoreleasePoolPush();
+   return( pool);  // could store something in TLS here
 }
 
-
-- (instancetype) init
+static void
+   mulle_mongoose_did_exit_thread( const struct mg_context *ctx, int thread_type, void *pool)
 {
-   return( [self initWithOptions:NULL]);
+   MulleCivetWebServer   *server;
+
+   MulleAutoreleasePoolPop( pool);
+   if( thread_type == 0)
+   {
+      server = mg_get_user_data( ctx);
+      server->_isReady = NO;
+   }
 }
 
-- (void) finalize
-{
-   if( _ctx)
-      mg_stop( _ctx);
-   [super finalize];
-}
 
 
 static int   log_message( const struct mg_connection *conn, const char *message)
 {
-   struct mg_request_info  *info;
    MulleCivetWebServer     *server;
 
-   info   = (struct mg_request_info *) mg_get_request_info( conn);
-   server = info->user_data;
+   server = mg_get_user_context_data( conn);
+   if( ! server)
+      return( 0);  // use default logger
+
    [server log:[NSString stringWithCString:(char *) message]];
-   return( 0);
+   return( 1);
 }
 
 
@@ -293,6 +309,54 @@ static int   log_message( const struct mg_connection *conn, const char *message)
 }
 
 
+- (NSArray *) openPortInfos
+{
+   int                     n;
+   NSMutableArray          *array;
+   struct mg_server_port   *ports;
+   struct mg_server_port   *sentinel;
+   NSNumber                *yes;
+   NSNumber                *no;
+   NSDictionary            *info;
+
+   if( ! _ctx)
+      return( nil);
+
+   n = mg_get_server_ports( _ctx, 0, NULL);
+   if( n < 0)
+      return( nil);
+
+   if( ! n)
+      return( [NSArray array]);
+
+   ports = MulleObjCCallocAutoreleased( n, sizeof( struct mg_server_port));
+   n     = mg_get_server_ports( _ctx, n, ports);
+   if( n < 0)
+      return( nil);
+
+   yes   = @(YES);
+   no    = @(NO);
+
+   array = [NSMutableArray arrayWithCapacity:n];
+   sentinel = &ports[ n];
+   while( ports < sentinel)
+   {
+      info = @{
+               @"isSSL":      ports->is_ssl ? yes : no,
+               @"isRedirect": ports->is_redirect ? yes : no,
+               @"protocol":   ports->protocol == 3
+                                 ? @"IPV6"
+                                 : (ports->protocol == 2)
+                                    ? @"???"
+                                    : @"IPv4",
+               @"port":      @(ports->port)
+               };
+      [array addObject:info];
+      ++ports;
+   }
+
+   return( array);
+}
 
 @end
 

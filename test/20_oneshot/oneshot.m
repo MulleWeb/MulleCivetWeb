@@ -4,29 +4,38 @@
 #include <MulleCivetWeb/civetweb.h>
 
 
-@interface TestWebServer : MulleCivetWebServer <MulleCivetWebRequestHandler>
-@end
 
+@implementation MulleCivetWebResponse ( Test)
 
-@implementation TestWebServer
-
-- (void) writeWebResponse:(id <MulleCivetWebResponse>) response
-               onlyHeader:(BOOL) onlyHeader
+- (void) sendHeaderData
 {
    NSData   *headerData;
+
+   headerData = [self headerDataUsingEncoding:NSUTF8StringEncoding];
+   printf( "%.*s", (int) [headerData length], [headerData bytes]);
+}
+
+- (void) sendContentData
+{
    NSData   *contentData;
 
-   headerData = [response headerDataUsingEncoding:NSUTF8StringEncoding];
-   printf( "%.*s", (int) [headerData length], [headerData bytes]);
-   if( onlyHeader)
-      return;
-
-   contentData = [response contentData];
+   contentData = [self contentData];
    printf( "%.*s", (int) [contentData length], [contentData bytes]);
 }
 
+@end
 
-- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request
+
+
+@interface RequestHandler : NSObject <MulleCivetWebRequestHandler>
+@end
+
+
+@implementation RequestHandler
+
+
+- (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
+             webResponseForWebRequest:(MulleCivetWebRequest *) request
 {
    MulleCivetWebTextResponse  *response;
    NSURL                      *url;
@@ -66,26 +75,31 @@
 
 int   main( int argc, char *argv[])
 {
-   TestWebServer              *server;
+   RequestHandler             *handler;
+   MulleCivetWebServer        *server;
    MulleCivetWebRequest       *request;
    NSData                     *contentData;
-   struct mg_request_info     info;
    int                        rval;
 
-   server = [TestWebServer object];
-   [server setRequestHandler:server];
+   server  = [MulleCivetWebServer object];
+   @autoreleasepool
+   {
+      handler = [RequestHandler object];
+      [server setRequestHandler:handler];
 
-   contentData = [@"VfL Bochum 1848" dataUsingEncoding:NSUTF8StringEncoding];
+      contentData = [@"VfL Bochum 1848" dataUsingEncoding:NSUTF8StringEncoding];
 
-   request = [MulleCivetWebRequest webRequestWithServer:server
-                                                    URL:[NSURL URLWithString:@"/foo"]
-                                                headers:@{
-                                                            MulleCivetWebContentTypeKey: @"text/plain; charset=utf-8",
-                                                            MulleCivetWebContentLengthKey: [NSString stringWithFormat:@"%ld", [contentData length]]
-                                                         }
-                                            contentData:contentData];
+      request = [MulleCivetWebRequest webRequestWithServer:server
+                                                       URL:[NSURL URLWithString:@"/foo"]
+                                                   headers:@{
+                                                               MulleHTTPContentTypeKey: @"text/plain; charset=utf-8",
+                                                               MulleHTTPContentLengthKey: [NSString stringWithFormat:@"%ld", [contentData length]]
+                                                            }
+                                               contentData:contentData];
+      rval = [server handleWebRequest:request];
+      printf( "%d\n", rval);
+   }
+   [server mullePerformFinalize];
 
-
-   rval    = [server handleWebRequest:request];
-   printf( "%d\n", rval);
+   return( 0);
 }

@@ -20,7 +20,12 @@ src/MulleCivetWebRequest.h
 src/MulleCivetWebResponse.h
 src/MulleCivetWebServer.h
 src/MulleCivetWeb.h
+src/MulleHTTP.h
 src/MulleObjCLoader+MulleCivetWeb.h
+src/NSDate+MulleHTTP.h
+src/NSString+ListComponents.h
+src/NSURL+MulleCivetWeb.h
+src/NSURL+NSDictionary.h
 src/civetweb/include/civetweb.h
 src/import.h
 )

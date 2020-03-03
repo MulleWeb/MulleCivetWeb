@@ -1,13 +1,14 @@
 
 struct mg_connection;
 struct mg_request_info;
+@class MulleCivetWebServer;
+@class NSURL;
+@class NSDictionary;
+@class NSData;
+
 
 @interface MulleCivetWebRequest( Private)
 
-- (instancetype) initWithConnection:(struct mg_connection *) conn;
-
-// useful for testing
-- (instancetype) initWithRequestInfo:(struct mg_request_info *) info;
 
 //
 // this is a way to create "fake" requests for testing
@@ -16,5 +17,12 @@ struct mg_request_info;
                                   URL:(NSURL *) url
                               headers:(NSDictionary *) headers
                           contentData:(NSData *) data;
+
+- (instancetype) initWithConnection:(struct mg_connection *) conn;
+
+// can be useful for testing
+- (instancetype) initWithRequestInfo:(struct mg_request_info *) info;
+
+- (struct mg_connection *) connection;
 
 @end

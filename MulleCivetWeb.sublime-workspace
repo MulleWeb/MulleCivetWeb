@@ -4,6 +4,34 @@
 		"selected_items":
 		[
 			[
+				"is",
+				"is_ssl\tint is_ssl"
+			],
+			[
+				"ur",
+				"uri"
+			],
+			[
+				"NS",
+				"NSDateFormatter"
+			],
+			[
+				"ch",
+				"characterSet\tabc"
+			],
+			[
+				"NSU",
+				"NSURL+MulleQueryDictionary.h"
+			],
+			[
+				"compo",
+				"components\tabc"
+			],
+			[
+				"key",
+				"keyvalueComponents\tabc"
+			],
+			[
 				"Mu",
 				"MulleObjCValueFoundation"
 			],
@@ -428,10 +456,6 @@
 				"CMakeSourcesAndHeaders.txt"
 			],
 			[
-				"is",
-				"isshared"
-			],
-			[
 				"MULLE_SOURC",
 				"MULLE_SOURCETREE_SHARED_DIR"
 			],
@@ -490,33 +514,30 @@
 			[
 				"sourcetree_get_",
 				"sourcetree_get_usage"
-			],
-			[
-				"n",
-				"nodetype"
-			],
-			[
-				"_no",
-				"_nodeline_get_uuid"
-			],
-			[
-				"source",
-				"sourcetree_get_nodeline"
-			],
-			[
-				"TO",
-				"TOEMIT_DIRECTORIES"
-			],
-			[
-				"html",
-				"html_escape"
-			],
-			[
-				"fetch",
-				"fetchoptions"
 			]
 		]
 	},
+	"buffers":
+	[
+		{
+			"file": "src/MulleCivetWeb.h",
+			"settings":
+			{
+				"buffer_size": 874,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Volumes/Source/srcO/mulle-objc/mulle-objc-runtime/test-compiler/0_compiler/metaabi/metaabi-struct-rval.m",
+			"settings":
+			{
+				"buffer_size": 869,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
 	"build_system": "",
 	"build_system_choices":
 	[
@@ -565,8 +586,28 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/Volumes/Source/srcO/MulleCivetWeb",
+		"/Volumes/Source/srcO/MulleCivetWeb/src",
+		"/Volumes/Source/srcO/MulleCivetWeb/test",
+		"/Volumes/Source/srcO/MulleCivetWeb/test/20_oneshot",
+		"/Volumes/Source/srcO/MulleCivetWeb/test/30_url"
+	],
 	"file_history":
 	[
+		"/Volumes/Source/srcO/MulleCivetWeb/src/MulleCivetWebServer.h",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/MulleCivetWebServer.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/MulleCivetWebRequest.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/MulleCivetWebResponse.h",
+		"/Volumes/Source/srcO/MulleCivetWeb/test/20_oneshot/oneshot.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/test/20_oneshot/oneshot-info.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/NSDate+MulleHTTP.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/NSURL+NSDictionary.h",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/NSURL+NSDictionary.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/NSURL+MulleCivetWeb.m",
+		"/Volumes/Source/srcO/MulleCivetWeb/src/NSURL+MulleCivetWeb.h",
+		"/home/src/srcO/MulleFoundation/MulleObjCStandardFoundation/src/CharacterSet/URLQueryAllowedCharacterSet.m",
 		"/home/src/srcO/MulleCivetWeb/src/import-private.h",
 		"/Volumes/Source/srcC/Dienstag/Dienstag/Dienstag.xcodeproj/project.pbxproj",
 		"/home/src/srcO/MulleFoundation/MulleObjCCurlFoundation/stash/curl/CMakeLists.txt",
@@ -682,29 +723,19 @@
 		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Locale/NSCalendarDate.m",
 		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Exception/MulleObjCStandardFoundationException.h",
 		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Container/NSSortDescriptor.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Container/NSSortDescriptor+NSCoder.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Archiver/NSUnarchiver.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Archiver/NSKeyedUnarchiver.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Archiver/NSKeyedArchiver.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Archiver/MulleObjCUnarchiver.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Archiver/MulleObjCArchiver.m",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Archiver/MulleObjCArchiver-Private.h",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Container/NSSet/NSSet+NSString.h",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Undo/NSUndoManager.h",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/String/NSScanner.h",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/String/NSFormatter.h",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/String/NSCharacterSet.h",
-		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/String/MulleObjCCharacterBitmap.h"
+		"/Volumes/Source/srcO/MulleFoundation/MulleObjCStandardFoundation/src/Container/NSSortDescriptor+NSCoder.m"
 	],
 	"find":
 	{
-		"height": 49.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
 		"height": 139.454545455,
 		"where_history":
 		[
+			"",
+			"mulleHTTPDescription"
 		]
 	},
 	"find_state":
@@ -712,6 +743,23 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"mulleParameterDictionary",
+			"server:",
+			"\"NSURL+MulleCivetWeb.h\"",
+			"getInfo(",
+			"getInfo( self)",
+			"_requestHandler webResponseForException",
+			"webResponseForWebRequest",
+			"mulleDictionaryByRemovingPercentEncodingWithLineSeparator",
+			"getURLParameterAllowedWithoutAmpersandAndEqualCharacterSet",
+			"getInfo",
+			"MulleURLUTF8Parts",
+			"mulleURLEscapedAllowedCharacterSet",
+			"\"NSURL+MulleQueryDictionary.h\"",
+			"_charset",
+			"characterSet",
+			"URLUserAllowedCharacterSet",
+			"HTTPDescription",
 			"scap"
 		],
 		"highlight": true,
@@ -720,6 +768,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"\"NSURL+NSDictionary.h\"",
+			"_formatter",
+			"formatter",
+			""
 		],
 		"reverse": false,
 		"show_context": true,
@@ -727,9 +779,82 @@
 		"whole_word": false,
 		"wrap": true
 	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/MulleCivetWeb.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 874,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								594,
+								772
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1583234762.0,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"tabs_extra_spawned": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Volumes/Source/srcO/mulle-objc/mulle-objc-runtime/test-compiler/0_compiler/metaabi/metaabi-struct-rval.m",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 869,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								553,
+								553
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/Objective-C/Objective-C.sublime-syntax",
+							"tabs_extra_last_activated": 1583242877.88,
+							"tabs_extra_last_activated_sheet_index": 1,
+							"tabs_extra_spawned": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 109.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
 	"incremental_find":
 	{
-		"height": 37.0
+		"height": 38.0
 	},
 	"input":
 	{
@@ -766,7 +891,12 @@
 	{
 		"height": 124.0
 	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
 	"pinned_build_system": "",
+	"project": "MulleCivetWeb.sublime-project",
 	"replace":
 	{
 		"height": 70.0
@@ -873,7 +1003,7 @@
 		[
 			[
 				"",
-				"/home/src/srcS/mulle-sde.sublime-project"
+				"/home/src/srcO/MulleFoundation/MulleFoundation.sublime-project"
 			],
 			[
 				"core",
@@ -903,6 +1033,7 @@
 		],
 		"width": 584.0
 	},
+	"selected_group": 0,
 	"settings":
 	{
 	},
@@ -910,7 +1041,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 409.0,
+	"side_bar_width": 373.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

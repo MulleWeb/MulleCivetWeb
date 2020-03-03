@@ -32,6 +32,13 @@ static inline unsigned int   MulleCivetWeb_get_version_patch( void)
 extern uint32_t   MulleCivetWeb_get_version( void);
 
 
+#import "MulleHTTP.h"
+#import "NSDate+MulleHTTP.h"
+#import "NSDate+MulleHTTP.h"
+#import "NSString+ListComponents.h"
+#import "NSURL+MulleCivetWeb.h"
+#import "NSURL+NSDictionary.h"
+
 #import "MulleCivetWebRequest.h"
 #import "MulleCivetWebResponse.h"
 #import "MulleCivetWebServer.h"

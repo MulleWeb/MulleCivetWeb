@@ -61,8 +61,8 @@ enum MulleHTTPRequestMethod
 //
 @interface MulleCivetWebRequest : NSObject
 {
-   void           *_conn;  // struct mg_connection *
-   void           *_info;  // struct mg_request_info *
+   void           *_connection;  // struct mg_connection *
+   void           *_info;        // struct mg_request_info *
    NSURL          *_url;
    NSDictionary   *_headers;
    NSData         *_contentData;
@@ -73,7 +73,22 @@ enum MulleHTTPRequestMethod
 - (NSString *) HTTPVersion;
 - (NSString *) remoteUser;
 - (NSString *) remoteIP;
+
+// waits for all data to arrive
 - (NSData *) contentData;
+
+//
+// waits for up to length data to arrive (one call to mg_read)
+// the data read with partialContentDataWithCapacity: will not be
+// available through contentData.
+// nil indicates failure
+//
+- (NSData *) partialContentDataWithCapacity:(NSUInteger) length;
+
+//
+// will not read more than INT_MAX bytes, if you need more
+// use partialContentDatcaWithCapacity:
+//
 - (NSUInteger) contentLength;
 - (NSDictionary *) headers;
 
