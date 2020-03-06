@@ -127,7 +127,10 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
 
 - (enum MulleHTTPRequestMethod) method
 {
-   switch( getInfo( self)->request_method[ 0])
+   struct mg_request_info   *info;
+
+   info = getInfo( self);
+   switch( info->request_method[ 0])
    {
 //   case 'C' : return( MulleHTTPConnect);
    case 'D' : return( MulleHTTPDelete);
@@ -139,7 +142,7 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
    default  : return( MulleHTTPOther);
    }
 
-   switch( getInfo( self)->request_method[ 1])
+   switch( info->request_method[ 1])
    {
 //   case 'A' : return( MulleHTTPPatch);
    case 'O' : return( MulleHTTPPost);
@@ -161,6 +164,32 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
 }
 
 
+static char   *find_header_value_in_request_info( struct mg_request_info *info, char *key)
+{
+   struct mg_header   *header;
+   struct mg_header   *sentinel;
+
+   header   = &info->http_headers[ 0];
+   sentinel = &info->http_headers[ info->num_headers];
+
+   while( header < sentinel)
+   {
+      if( ! strcmp( key, header->name))
+         return( (char *) header->value);
+      ++header;
+   }
+   return( NULL);
+}
+
+
+- (char *) findHeaderCStringForKeyCString:(char *) key
+{
+   struct mg_request_info   *info;
+
+   info = getInfo( self);
+   return( find_header_value_in_request_info( info, key));
+}
+
 
 // if this returns nil, then the response should be 414
 // ```
@@ -180,6 +209,7 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
    NSString                 *scheme;
    NSString                 *resourceSpecifier;
    struct mg_request_info   *info;
+   char                     *host;
 
    if( _url)
       return( _url);
@@ -196,6 +226,8 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
       return( nil);
    }
 
+   host = find_header_value_in_request_info( info, "Host");
+
    //
    // since we already have the whole string (somewhere in memory)
    // and we duplicate it with NSURL again...
@@ -209,9 +241,10 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
       return( nil);
    }
 
-   _url = [[NSURL alloc] mulleInitHTTPWithEscapedURIUTF8Characters:uri
-                                                            length:uri_len
-                                                             isSSL:info->is_ssl];
+   _url = [[[NSURL alloc] mulleInitHTTPWithEscapedURIUTF8Characters:uri
+                                                             length:uri_len
+                                                               host:host
+                                                              isSSL:info->is_ssl] autorelease];
    if( ! _url)
    {
 #if DEBUG

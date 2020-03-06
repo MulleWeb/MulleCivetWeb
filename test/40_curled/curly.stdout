@@ -1,9 +1,11 @@
 Reply
 ---------------------
-URL: https:/foo
-Content: 
+URL: https://localhost:8080/foo
+Content: VfL%20Bochum%201848
 Header Accept: */*
-Header Content-Type: text/plain; charset=utf-8
+Header Content-Type: application/x-www-form-urlencoded
+Header Content-Length: 19
 Header Host: localhost:8080
+Header User-Agent: test
 ---------------------
 

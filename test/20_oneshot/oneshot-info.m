@@ -86,6 +86,12 @@
 @end
 
 
+static char  *options[] =
+{
+   "num_threads", "1",
+   NULL, NULL
+};
+
 
 int   main( int argc, char *argv[])
 {
@@ -95,9 +101,23 @@ int   main( int argc, char *argv[])
    struct mg_request_info     info;
    int                        rval;
 
-   server  = [MulleCivetWebServer object];
+   server  = [[[MulleCivetWebServer alloc] initWithCStringOptions:options] autorelease];
    handler = [RequestHandler object];
    [server setRequestHandler:handler];
+
+   //
+   // chance to try with curl from the outside
+   // interestingly, Sublime Text broadcasts changes to files via :8080
+   // so you may get some stray requests :)
+   //
+   if( argc == 2)
+   {
+      fprintf( stderr, "CTRL-C to exit\n");
+      for(;;)
+      {
+         sleep( 100);
+      }
+   }
 
    // fake a request manually
    memset( &info, 0, sizeof( info));

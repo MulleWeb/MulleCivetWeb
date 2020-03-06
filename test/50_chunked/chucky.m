@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 
-@interface MyWebRequestHandler : NSObject <MulleCivetWebRequestHandler>
+@interface MyWebRequestHandler : NSObject <MulleCivetWebRequestHandler, MulleCurlParser>
 @end
 
 
@@ -27,7 +27,12 @@
 
    response    = [MulleCivetWebTextResponse webResponseForWebRequest:request];
    [response setDate:[NSDate dateWithTimeIntervalSinceReferenceDate:0]];
-   // [response addToTransferEncodings:MulleHTTPTransferEncodingChunked];
+   [response addToTransferEncodings:MulleHTTPTransferEncodingChunked];
+
+   if( [request method] == MulleHTTPHead)
+      return( response);
+
+   [response sendHeaderData];
 
    [response appendLine:@"Reply"];
 
@@ -37,6 +42,8 @@
    [response appendString:@"Content: "];
    [response appendLine:[NSString mulleStringWithData:contentData
                                              encoding:NSUTF8StringEncoding]];
+
+   [response sendChunkedContentData];
 
    headers = [request headers];
    for( key in headers)
@@ -48,8 +55,30 @@
    }
    [response appendLine:@"---------------------"];
 
-   return( response);
+   [response sendChunkedContentData];
+
+   // send a trailing nil ?
+   [response sendChunkedContentData];
+
+   return( nil);
 }
+
+
+
+- (BOOL) curl:(MulleCurl *) curl
+   parseBytes:(void *) bytes
+       length:(NSUInteger) length
+ {
+   printf( "%.*s\n", (int) length, bytes);
+   return( YES);  // always happy
+}
+
+
+- (id) parsedObjectWithCurl:(MulleCurl *) curl
+{
+   return( nil);
+}
+
 
 
 - (void) request:(id) server
@@ -72,7 +101,8 @@
 
    // means that data should be stringEscaped
    headers = @{
-                  MulleHTTPContentTypeKey: @"application/x-www-form-urlencoded"
+                  MulleHTTPContentTypeKey: @"application/x-www-form-urlencoded",
+                  MulleHTTPAcceptEncodingKey: MulleHTTPTransferEncodingChunked
               };
 
    [curl setRequestHeaders:headers];
@@ -83,12 +113,16 @@
    postData     = [NSData dataWithBytes:[encoded UTF8String]
                                  length:[encoded mulleUTF8StringLength]];
 
-   data = [curl dataWithContentsOfURLWithString:@"http://localhost:8080/foo"
-                                  byPostingData:postData]; // @"https://www.mulle-kybernetik.com/robots.txt"];
-   if( ! data)
-      printf( "no data\n");
-   printf( "%.*s\n", (int) [data length], [data bytes]);
+   [curl setParser:self];
+   [curl parseContentsOfURLWithString:@"http://localhost:8080/foo"
+                        byPostingData:postData];
+//  data = [curl dataWithContentsOfURLWithString:@"http://localhost:8080/foo"
+//                                 byPostingData:postData]; // @"https://www.mulle-kybernetik.com/robots.txt"];
+//  if( ! data)
+//     printf( "no data\n");
+//  printf( "%.*s\n", (int) [data length], [data bytes]);
 }
+
 
 @end
 

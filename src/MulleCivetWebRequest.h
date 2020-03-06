@@ -99,6 +99,7 @@ enum MulleHTTPRequestMethod
 - (unsigned int) remotePort;
 - (BOOL) isSSL;
 - (void *) clientCertificate;
+- (char *) findHeaderCStringForKeyCString:(char *) key;
 
 @end
 

@@ -58,7 +58,10 @@
 
 //
 // the webserver gets requests via civetweb, usually it dispatches them
-// to the requestHandler which should fill in the response
+// to the requestHandler which should fill in the response.
+// The server runs as soon as you init it. If you use MULLE_OBJC_PEDANTIC_EXIT
+// you must mullePerformFinalize the server, so that the threads release
+// the universe
 //
 @interface MulleCivetWebServer : NSObject
 {
@@ -69,15 +72,18 @@
 
 @property( assign) id <MulleCivetWebRequestHandler>   requestHandler;
 
-// options: like civetweb accepts
+// options passed through to mg_start options
 - (instancetype) initWithCStringOptions:(char **) options;
 
+// if the server is listening
 - (BOOL) isReady;
 
 
 // you can override this, or plop in a requestHandler
 - (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request;
 
+// gives you an array of dictionaries, or nil if the information
+// can't be obtained
 - (NSArray *) openPortInfos;
 
 @end

@@ -44,6 +44,9 @@
 #include "civetweb.h"
 
 
+#define RESPONSE_DEBUG
+
+
 @implementation MulleCivetWebResponse
 
 - (id) init
@@ -153,9 +156,7 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    NSDate          *date;
    NSString        *s;
 
-   contentLength = [[self contentData] length];
-
-   data = [NSMutableData dataWithCapacity:contentLength+2048];
+   data = [NSMutableData dataWithCapacity:2048];
 
    assert( _status);
    assert( _statusText);
@@ -183,18 +184,30 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    [_orderedHeaderKeys removeObject:key];
    appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);
 
-   key   = MulleHTTPContentLengthKey;
-   value = [_headers objectForKey:key];
-   if( ! value)
-      value = [NSString stringWithFormat:@"%lu", (unsigned long) contentLength];
-   [_orderedHeaderKeys removeObject:key];
-   appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);
 
    for( key in _orderedHeaderKeys)
    {
       value = [_headers objectForKey:key];
       appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);
    }
+
+   /*
+    * if you send the header before contentData is filled up,
+    * sending ContentLength is a problem
+    */
+   if( ! [self containsTransferEncoding:MulleHTTPTransferEncodingChunked])
+   {
+      // this will create contentData possibly dynamically
+      contentLength = [[self contentData] length];
+
+      key   = MulleHTTPContentLengthKey;
+      value = [_headers objectForKey:key];
+      if( ! value)
+         value = [NSString stringWithFormat:@"%lu", (unsigned long) contentLength];
+      [_orderedHeaderKeys removeObject:key];
+      appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);
+   }
+
    [data appendBytes:"\r\n"
               length:2];
 
@@ -204,14 +217,38 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
 - (BOOL) sendHeaderData
 {
-   NSData   *data;
-   int      rval;
+   NSData       *data;
+   int          rval;
+   NSUInteger   length;
 
-   data = [self headerDataUsingEncoding:NSUTF8StringEncoding];
-   rval = mg_write( _connection, [data bytes], [data length]);
+   data   = [self headerDataUsingEncoding:NSUTF8StringEncoding];
+   length = [data length];
+
+#ifdef RESPONSE_DEBUG
+   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+#endif
+   rval = mg_write( _connection, [data bytes], length);
 
    return( rval == -1 ? NO : YES);
 }
+
+
+//- (BOOL) sendChunkedHeaderData
+//{
+//   NSData       *data;
+//   int          rval;
+//   NSUInteger   length;
+//
+//   data   = [self headerDataUsingEncoding:NSUTF8StringEncoding];
+//   length = [data length];
+//
+//#ifdef RESPONSE_DEBUG
+//   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+//#endif
+//   rval = mg_send_chunk( _connection, [data bytes], length);
+//
+//   return( rval == -1 ? NO : YES);
+//}
 
 
 - (BOOL) sendChunkedContentData
@@ -222,13 +259,17 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    int          rval;
 
    data   = [self contentData];
+   bytes  = [data bytes];
    length = [data length];
-   if( ! length)
-      return( YES);
 
-   bytes = [data bytes];
+#ifdef RESPONSE_DEBUG
+   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+#endif
+
+   // also be able to send empty data
    rval  = mg_send_chunk( _connection, bytes, length);
 
+   // must do this even if length is 0
    [self clearContentData];
 
    return( rval == -1 ? NO : YES);
@@ -244,6 +285,10 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
    data   = [self contentData];
    length = [data length];
+
+#ifdef RESPONSE_DEBUG
+   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+#endif
    if( ! length)
       return( YES);
 
@@ -273,18 +318,20 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    else
       value = [value mulleStringByAddingListComponent:s
                                             separator:@","]; // check for dupe
-   [_headers setObject:value
-                forKey:MulleHTTPTransferEncodingKey];
+   [self setObject:value
+            forKey:MulleHTTPTransferEncodingKey];
 }
 
 
 - (BOOL) containsTransferEncoding:(NSString *) s
 {
    NSString   *value;
+   NSRange    range;
 
    value = [_headers objectForKey:MulleHTTPTransferEncodingKey];
-   return( [value mulleRangeOfListComponent:s
-                                  separator:@","].length != 0);
+   range = [value mulleRangeOfListComponent:s
+                                  separator:@","];
+   return( range.length != 0);
 }
 
 
@@ -346,20 +393,33 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 {
    NSData   *data;
 
-   data = _contentData;
-   if( ! data)
-   {
-      data = [_content dataUsingEncoding:_encoding];
-      [self setContentData:data];
-   }
+   data = [_content dataUsingEncoding:_encoding];
+   [self setContentData:data];
+
+#ifdef RESPONSE_DEBUG
+   fprintf( stderr, "~~~ %s: %s (%p %ld bytes)\n", __PRETTY_FUNCTION__,
+                                        [_content UTF8String],
+                                        _contentData,
+                                        [_contentData length]);
+#endif
    return( data);
 }
 
 
 - (void) clearContentData
 {
+
+   assert( _content);
    [_content setString:@""];
+
    [super clearContentData];
+
+#ifdef RESPONSE_DEBUG
+   fprintf( stderr, "~~~ %s: %s (%p %ld bytes)\n", __PRETTY_FUNCTION__,
+                                        [_content UTF8String],
+                                        _contentData,
+                                        [_contentData length]);
+#endif
 }
 
 @end

@@ -1,5 +1,6 @@
 #ifdef __MULLE_OBJC__
 # import <MulleCivetWeb/MulleCivetWeb.h>
+# import <MulleCivetWeb/private/MulleCivetWebRequest+Private.h>
 # include <mulle-testallocator/mulle-testallocator.h>
 #else
 # import <Foundation/Foundation.h>
@@ -19,12 +20,17 @@
 static void   test_noleak( void)
 {
    MulleCivetWebTextResponse  *obj;
+   MulleCivetWebRequest       *request;
 
    @autoreleasepool
    {
       @try
       {
-         obj = [[MulleCivetWebTextResponse new] autorelease];
+         request = [MulleCivetWebRequest webRequestWithServer:nil
+                                                          URL:nil
+                                                      headers:nil
+                                                  contentData:nil];
+         obj = [MulleCivetWebTextResponse webResponseForWebRequest:request];
          if( ! obj)
          {
             fprintf( stderr, "failed to allocate\n");

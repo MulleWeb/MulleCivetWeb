@@ -42,7 +42,7 @@
 //
 // abstract class: use a subclass that implements contentData
 // The WebResponse has the connection of the WebServer, it sends
-// itself back. You cant't copy or retain a WebResponse, since
+// its contents and header back. You cant't copy or retain a WebResponse, since
 // the _connection is gone after the response is through
 //
 @interface MulleCivetWebResponse : NSObject

@@ -56,6 +56,12 @@
 }
 
 
++ (void) deinitialize
+{
+   mg_exit_library();
+}
+
+
 - (instancetype) initWithCStringOptions:(char **) options
 {
    struct mg_callbacks   callbacks;

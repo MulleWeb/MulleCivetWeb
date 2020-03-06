@@ -71,21 +71,40 @@
 
 @end
 
+static char  *options[] =
+{
+   "num_threads", "1",
+   NULL, NULL
+};
 
 
 int   main( int argc, char *argv[])
 {
-   RequestHandler             *handler;
-   MulleCivetWebServer        *server;
-   MulleCivetWebRequest       *request;
-   NSData                     *contentData;
-   int                        rval;
+   RequestHandler         *handler;
+   MulleCivetWebServer    *server;
+   MulleCivetWebRequest   *request;
+   NSData                 *contentData;
+   int                    rval;
 
-   server  = [MulleCivetWebServer object];
+   server  = [[[MulleCivetWebServer alloc] initWithCStringOptions:options] autorelease];
    @autoreleasepool
    {
       handler = [RequestHandler object];
       [server setRequestHandler:handler];
+
+      //
+      // chance to try with curl from the outside
+      // interestingly, Sublime Text broadcasts changes to files via :8080
+      // so you may get some stray requests :)
+      //
+      if( argc == 2)
+      {
+         fprintf( stderr, "CTRL-C to exit\n");
+         for(;;)
+         {
+            sleep( 100);
+         }
+      }
 
       contentData = [@"VfL Bochum 1848" dataUsingEncoding:NSUTF8StringEncoding];
 
