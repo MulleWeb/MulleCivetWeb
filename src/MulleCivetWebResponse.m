@@ -37,9 +37,8 @@
 
 #import "MulleCivetWebRequest.h"
 #import "MulleCivetWebRequest+Private.h"
-#import "MulleHTTP.h"
-#import "NSDate+MulleHTTP.h"
-#import "NSString+ListComponents.h"
+
+#import "import-private.h"
 
 #include "civetweb.h"
 
@@ -63,7 +62,6 @@
       [self release];
       return( nil);
    }
-
    _connection        = connection;
 
    if( ! s)
@@ -76,13 +74,6 @@
    _statusText        = @"OK";
 
    return( self);
-}
-
-
-- (instancetype) initWithConnection:(void *) connection
-{
-   return( [self initWithHTTPVersion:nil
-                          connection:connection]);
 }
 
 
@@ -113,8 +104,9 @@
 }
 
 
-- (void) setObject:(NSString *) value
-            forKey:(NSString *) key
+
+- (void) setHeaderValue:(NSString *) value
+                 forKey:(NSString *) key
 {
    assert( ! [key hasSuffix:@":"]);
 
@@ -122,6 +114,12 @@
       [_orderedHeaderKeys addObject:key];
    [_headers setObject:value
                 forKey:key];
+}
+
+
+- (NSString *) headerValueForKey:(NSString *) key
+{
+   return( [_headers objectForKey:key]);
 }
 
 
@@ -148,13 +146,13 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
 - (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding
 {
-   NSMutableData   *data;
-   NSUInteger      contentLength;
-   NSString        *key;
-   NSString        *value;
    NSData          *contentData;
    NSDate          *date;
+   NSMutableData   *data;
+   NSString        *key;
    NSString        *s;
+   NSString        *value;
+   NSUInteger      contentLength;
 
    data = [NSMutableData dataWithCapacity:2048];
 
@@ -164,7 +162,6 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    s = [NSString stringWithFormat:@"HTTP/%@ %lu %@\r\n",
          _httpVersion, (unsigned long) _status, _statusText];
    [data appendData:[s dataUsingEncoding:encoding]];
-
 
    // do some standard headers
    key   = MulleHTTPDateKey;
@@ -218,8 +215,10 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 - (BOOL) sendHeaderData
 {
    NSData       *data;
-   int          rval;
    NSUInteger   length;
+   int          rval;
+
+   NSParameterAssert( ! [self hasSentHeader]);
 
    data   = [self headerDataUsingEncoding:NSUTF8StringEncoding];
    length = [data length];
@@ -229,38 +228,20 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 #endif
    rval = mg_write( _connection, [data bytes], length);
 
-   return( rval == -1 ? NO : YES);
+   if( rval == -1)
+      return( NO);
+
+   _hasSentHeader = YES;
+   return( YES);
 }
 
 
-//- (BOOL) sendChunkedHeaderData
-//{
-//   NSData       *data;
-//   int          rval;
-//   NSUInteger   length;
-//
-//   data   = [self headerDataUsingEncoding:NSUTF8StringEncoding];
-//   length = [data length];
-//
-//#ifdef RESPONSE_DEBUG
-//   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
-//#endif
-//   rval = mg_send_chunk( _connection, [data bytes], length);
-//
-//   return( rval == -1 ? NO : YES);
-//}
-
-
-- (BOOL) sendChunkedContentData
+- (BOOL) sendChunkedContentBytes:(void *) bytes
+                          length:(NSUInteger) length
 {
-   NSData       *data;
-   void         *bytes;
-   NSUInteger   length;
-   int          rval;
+   int   rval;
 
-   data   = [self contentData];
-   bytes  = [data bytes];
-   length = [data length];
+   NSParameterAssert( [self hasSentHeader]);
 
 #ifdef RESPONSE_DEBUG
    fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
@@ -268,20 +249,40 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
    // also be able to send empty data
    rval  = mg_send_chunk( _connection, bytes, length);
-
-   // must do this even if length is 0
-   [self clearContentData];
-
    return( rval == -1 ? NO : YES);
+}
+
+
+- (BOOL) sendChunkedContentData
+{
+   NSData       *data;
+   void         *bytes;
+   NSUInteger   length;
+   BOOL         success;
+
+   data   = [self contentData];
+   bytes  = [data bytes];
+   length = [data length];
+
+   success = [self sendChunkedContentBytes:bytes
+                                   length:length];
+   // must do this even if length is 0
+   // clear on failure also ???? probably not
+   if( success)
+      [self clearContentData];
+
+   return( success);
 }
 
 
 - (BOOL) sendContentData
 {
-   NSData                 *data;
-   void                   *bytes;
-   NSUInteger             length;
-   int                    rval;
+   NSData       *data;
+   void         *bytes;
+   NSUInteger   length;
+   int          rval;
+
+   NSParameterAssert( [self hasSentHeader]);
 
    data   = [self contentData];
    length = [data length];
@@ -312,14 +313,16 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    BOOL             contains;
    NSMutableArray   *array;
 
+   NSParameterAssert( ! [self hasSentHeader]);
+
    value = [_headers objectForKey:MulleHTTPTransferEncodingKey];
    if( ! value)
       value = s;
    else
       value = [value mulleStringByAddingListComponent:s
                                             separator:@","]; // check for dupe
-   [self setObject:value
-            forKey:MulleHTTPTransferEncodingKey];
+   [self setHeaderValue:value
+                 forKey:MulleHTTPTransferEncodingKey];
 }
 
 
@@ -335,91 +338,44 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 }
 
 
+# pragma mark - MulleObjCStream protocol
 
-#ifdef DEBUG
-- (id) retain
+- (MulleObjCBufferedOutputStream *) createStream
 {
-   abort();
+   MulleObjCBufferedOutputStream   *stream;
+
+   NSParameterAssert( ! [self hasCreatedStream]);
+
+   // https://stackoverflow.com/questions/1098897/what-is-the-largest-safe-udp-packet-size-on-the-internet?noredirect=1
+   // astara/maupin. 1200 looks OK as we would like to emit a
+   // pretty full packet as early as possible here
+   stream = [[[MulleObjCBufferedOutputStream alloc] initWithOutputStream:self
+                                                             flushLength:1200] autorelease];
+   _hasCreatedStream = YES;
+   return( stream);
 }
 
 
-- (id) copy
+- (MulleObjCBufferedOutputStream *) createStreamAndSendHeaderData
 {
-   abort();
+   [self addToTransferEncodings:MulleHTTPTransferEncodingChunked];
+   if( ! [self sendHeaderData])
+      return( nil);
+   return( [self createStream]);
 }
-#endif
-
-@end
 
 
-// something that returns text, like HTML or TXT or so
-@implementation MulleCivetWebTextResponse
-
-- (instancetype) initWithHTTPVersion:(NSString *) s
-                          connection:(struct mg_connection *) connection
+- (void) mulleWriteBytes:(void *) bytes
+                  length:(NSUInteger) length
 {
-   self = [super initWithHTTPVersion:s
-                          connection:connection];
-   if( self)
+   if( ! [self sendChunkedContentBytes:bytes
+                                length:length])
    {
-      _content = [NSMutableString new];
-      _encoding = NSUTF8StringEncoding;
+      [NSException raise:NSInternalInconsistencyException
+                  format:@"remote client shut down ?"];
    }
-   return( self);
-}
-
-
-- (void) dealloc
-{
-   [_content release];
-
-   [super dealloc];
-}
-
-- (void) appendString:(NSString *) s
-{
-   [_content appendString:s];
-}
-
-
-- (void) appendLine:(NSString *) s
-{
-   [_content appendString:s];
-   [_content appendString:@"\r\n"];
-}
-
-
-- (NSData *) contentData
-{
-   NSData   *data;
-
-   data = [_content dataUsingEncoding:_encoding];
-   [self setContentData:data];
-
-#ifdef RESPONSE_DEBUG
-   fprintf( stderr, "~~~ %s: %s (%p %ld bytes)\n", __PRETTY_FUNCTION__,
-                                        [_content UTF8String],
-                                        _contentData,
-                                        [_contentData length]);
-#endif
-   return( data);
-}
-
-
-- (void) clearContentData
-{
-
-   assert( _content);
-   [_content setString:@""];
-
-   [super clearContentData];
-
-#ifdef RESPONSE_DEBUG
-   fprintf( stderr, "~~~ %s: %s (%p %ld bytes)\n", __PRETTY_FUNCTION__,
-                                        [_content UTF8String],
-                                        _contentData,
-                                        [_contentData length]);
-#endif
 }
 
 @end
+
+

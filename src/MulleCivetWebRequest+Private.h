@@ -2,7 +2,6 @@
 struct mg_connection;
 struct mg_request_info;
 @class MulleCivetWebServer;
-@class NSURL;
 @class NSDictionary;
 @class NSData;
 
@@ -14,7 +13,7 @@ struct mg_request_info;
 // this is a way to create "fake" requests for testing
 //
 + (instancetype) webRequestWithServer:(MulleCivetWebServer *) server
-                                  URL:(NSURL *) url
+                                  URL:(id) url
                               headers:(NSDictionary *) headers
                           contentData:(NSData *) data;
 

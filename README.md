@@ -1,6 +1,6 @@
 # 🦡 MulleCivetWeb
 
-MulleCivetWeb is a WebServer as a library. It is based on
+MulleCivetWeb is a "WebServer as a library". It is based on
 [civetweb](//github.com/civetweb/civetweb). You typically interact with
 MulleCivetWeb by creating a webserver object, and attaching your request
 handler to it:
@@ -15,17 +15,12 @@ int   main( int argc, char *argv[])
    MulleCivetWebServer  *server;
    MyRequestHandler     *handler;
 
-   @autoreleasepool
-   {
-      server  = [MulleCivetWebServer object];
+   server  = [MulleCivetWebServer object];
 
-      // the server is already running now!
-      handler = [MyRequestHandler object];
-      [server setRequestHandler:handler];
+   // the server is already running now!
+   handler = [MyRequestHandler object];
+   [server setRequestHandler:handler];
 
-      getchar();
-      // the server will die now...
-   }
    return( 0);
 }
 ```
@@ -38,12 +33,13 @@ The request handler will receive `MulleCivetWebRequests` and return
 
 - (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request
 {
-   MulleCivetWebTextResponse  *response;
+   MulleCivetWebTextResponse   *response; // subclass of MulleCivetWebResponse
 
    response = [MulleCivetWebTextResponse webResponseForWebRequest:request];
-   [response setObject:@"text/plain"
-                forKey:MulleHTTPContentTypeKey];
-
+   [response appendFormat:@"Method is %@\n",
+                     [request method] == MulleHTTPPost ? @"POST" : @"GET"]
+   [response appendFormat:@"Accept-Encoding is %@",
+                     [request headerValueForKey:MulleHTTPAcceptEncodingKey]];
    [response appendString:@"Hello World"];
    return( response);
 }
@@ -51,6 +47,7 @@ The request handler will receive `MulleCivetWebRequests` and return
 @end
 ```
 
+That's it.
 
 Class                       | Description
 ----------------------------|-----------

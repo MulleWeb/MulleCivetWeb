@@ -27,7 +27,7 @@ if( STANDALONE)
    endif()
 
    if( NOT STANDALONE_DEFINITIONS)
-      set( STANDALONE_DEFINITIONS ${MULLE_CIVET_WEB_DEFINITIONS})
+      set( STANDALONE_DEFINITIONS ${mulle_civet_web_DEFINITIONS})
    endif()
 
    #

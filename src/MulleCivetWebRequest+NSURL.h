@@ -1,5 +1,5 @@
 //
-//  NSDate+MulleHTTP.h
+//  MulleCivetWebRequest+NSURL.h
 //  MulleCivetWeb
 //
 //  Created by Nat! on 02.02.20.
@@ -33,12 +33,13 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
-#import "import.h"
+#import "MulleCivetWebRequest.h"
 
 
-@interface NSDate( MulleHTTP)
+@interface MulleCivetWebRequest( NSURL)
 
-// Sun, 06 Nov 1994 08:49:37 GMT
-- (NSString *) mulleHTTPDescription;
+- (NSURL *) URL;
 
 @end
+
+

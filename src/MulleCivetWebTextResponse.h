@@ -1,8 +1,8 @@
 //
-//  NSDate+MulleHTTP.m
+//  MulleCivetWebTextResponse.h
 //  MulleCivetWeb
 //
-//  Created by Nat! on 02.02.20.
+//  Created by Nat! on 21.03.20.
 //
 //  Copyright (c) 2020 Nat! - Mulle kybernetiK
 //  All rights reserved.
@@ -33,60 +33,22 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
+#import "MulleCivetWebResponse.h"
 
-#import "NSDate+MulleHTTP.h"
 
-
-@implementation NSDate( MulleHTTP)
-
-static struct
+//
+// something that returns text, like HTML or TXT or so
+// default contentType is text/plain
+//
+@interface MulleCivetWebTextResponse : MulleCivetWebResponse
 {
-   mulle_atomic_pointer_t   _formatter;
-} Self;
-
-
-+ (void) unload
-{
-   @autoreleasepool
-   {
-      [(id) _mulle_atomic_pointer_nonatomic_read( &Self._formatter) release];
-   }
+   NSMutableString   *_content;
 }
 
+@property( assign) NSStringEncoding   encoding;
 
-static NSDateFormatter  *getHTTPDateFormatter( void)
-{
-   NSDateFormatter  *formatter;
-
-   /*
-    * Cache
-    */
-   formatter = (NSDateFormatter *) _mulle_atomic_pointer_read( &Self._formatter);
-   if( ! formatter)
-   {
-      formatter = [[NSDateFormatter new] autorelease];
-      [formatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US"]];
-   // http://tools.ietf.org/html/rfc2616#section-3.3
-      [formatter setDateFormat:@"%a, %d %b %Y %H:%M:%S GMT"];
-      [formatter setTimeZone:[NSTimeZone mulleGMTTimeZone]];
-
-      // if
-      mulle_atomic_memory_barrier();
-      if( _mulle_atomic_pointer_cas( &Self._formatter, formatter, NULL))
-         [formatter retain];
-   }
-   return( formatter);
-}
-
-
-- (NSString *) mulleHTTPDescription
-{
-// Sun, 06 Nov 1994 08:49:37 GMT
-   NSDateFormatter  *formatter;
-
-   formatter = getHTTPDateFormatter();
-   return( [formatter stringFromDate:self]);
-}
+- (void) appendString:(NSString *) s;
+- (void) appendLine:(NSString *) s;  // adds CR/LF
+- (void) appendFormat:(NSString *) format, ...;
 
 @end
-

@@ -17,14 +17,13 @@ src/import-private.h
 )
 
 set( PUBLIC_HEADERS
+src/MulleCivetWebRequest+NSURL.h
 src/MulleCivetWebRequest.h
 src/MulleCivetWebResponse.h
 src/MulleCivetWebServer.h
+src/MulleCivetWebTextResponse.h
 src/MulleCivetWeb.h
-src/MulleHTTP.h
 src/MulleObjCLoader+MulleCivetWeb.h
-src/NSDate+MulleHTTP.h
-src/NSString+ListComponents.h
 src/NSURL+MulleCivetWeb.h
 src/NSURL+NSDictionary.h
 src/civetweb/include/civetweb.h

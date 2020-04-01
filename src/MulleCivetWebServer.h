@@ -66,7 +66,7 @@
 @interface MulleCivetWebServer : NSObject
 {
    void   *_ctx;
-   char   _server_name[ 80];
+   char   _server_name[ 256];
    char   _isReady;
 }
 
@@ -78,17 +78,32 @@
 // if the server is listening
 - (BOOL) isReady;
 
-
 // you can override this, or plop in a requestHandler
+- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request;
+
+// for more control, override this
 - (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request;
 
 // gives you an array of dictionaries, or nil if the information
 // can't be obtained
 - (NSArray *) openPortInfos;
 
+- (NSString *) optionForKey:(NSString *) key;
+- (char *) optionCStringForKeyCString:(char *) key;
+
+// the way to create http errors like 404 or so
+- (MulleCivetWebResponse *) webResponseForError:(NSUInteger) code
+                               errorDescription:(NSString *) errorDescription
+                                  forWebRequest:(MulleCivetWebRequest *) request;
 @end
 
 
+
+@interface MulleCivetWebServer(Future)
+
+- (void) log:(NSString *) format, ...;
+
+@end
 
 
 

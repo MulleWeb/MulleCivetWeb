@@ -7,22 +7,41 @@
 
 - (instancetype) mulleInitHTTPWithEscapedURIUTF8Characters:(mulle_utf8_t *) uri
                                                     length:(NSUInteger) uri_len
-                                                     host:(char *) host
+                                escapedQueryUTF8Characters:(mulle_utf8_t *) query
+                                                    length:(NSUInteger) query_len
+                                                      host:(char *) host
                                                      isSSL:(BOOL) isSSL
 {
-   NSString  *s;
-   NSCharacterSet   *characterSet;
+   NSString                           *s;
+   NSCharacterSet                     *characterSet;
+   struct MulleEscapedURLPartsUTF8    parts;
+   mulle_utf8_t                       *parameter;
 
-   _scheme = [(isSSL ? @"http" : @"https") copy];
-   if( host && *host)
+   memset( &parts, 0, sizeof( parts));
+
+   parts.scheme.characters = (mulle_utf8_t *) (isSSL ? "http" : "https");
+   parts.scheme.length     = -1;
+
+   parts.escaped_host.characters = (mulle_utf8_t *) host;
+   parts.escaped_host.length     = -1;
+
+   parts.escaped_path.characters = uri;
+   parts.escaped_path.length     = uri_len;
+
+   parameter = mulle_utf8_strnchr( uri, uri_len, ';');
+   if( parameter)
    {
-      s            = [[[NSString alloc] initWithUTF8String:host] autorelease];
-      characterSet = [NSCharacterSet URLHostAllowedCharacterSet];
-      s            = [s stringByAddingPercentEncodingWithAllowedCharacters:characterSet];
-      _escapedHost = [s copy];
+      parts.escaped_path.length = parameter - uri;
+
+      parts.escaped_parameter.characters = parameter + 1;
+      parts.escaped_parameter.length     = uri_len - (parts.escaped_path.length + 1);
    }
-   return( [self mulleInitResourceSpecifierWithUTF8Characters:uri
-                                                       length:uri_len]);
+
+   parts.escaped_query.characters = query;
+   parts.escaped_query.length     = query_len;
+
+   return( [self mulleInitWithEscapedURLPartsUTF8:&parts
+                           allowedURICharacterSet:nil]);
 }
 
 @end

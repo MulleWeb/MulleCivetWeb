@@ -39,7 +39,7 @@
 #import "MulleCivetWebRequest+Private.h"
 #import "MulleCivetWebResponse.h"
 #import "MulleCivetWebResponse+Private.h"
-#import "MulleHTTP.h"
+#import "MulleCivetWebTextResponse.h"
 
 #include "civetweb.h"
 
@@ -71,8 +71,10 @@
    /* Start Mongoose */
    memset( &callbacks, 0, sizeof(callbacks));
 
-   snprintf( _server_name, sizeof( _server_name), "MulleCivetWeb (civetweb v. %.32s)",
-            mg_version());
+   if( ! _server_name[ 0])
+      snprintf( _server_name, sizeof( _server_name), "%s (civetweb v. %.32s)",
+               [NSStringFromClass( [self class]) cStringDescription],
+               mg_version());
 
    callbacks.log_message   = &log_message;
    callbacks.begin_request = mulle_mongoose_begin_request;
@@ -118,7 +120,6 @@
    NSMutableString             *tmp;
    MulleCivetWebTextResponse   *textResponse;
 
-
    string = [[exception description] mulleStringByEscapingHTML];
    tmp    = [NSMutableString stringWithString:string];
    [tmp replaceOccurrencesOfString:@"\n"
@@ -146,6 +147,14 @@
 }
 
 
+- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request
+{
+   return( [self webResponseForError:404
+                    errorDescription:@"Nothing here"
+                       forWebRequest:request]);
+}
+
+
 - (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request
 {
    MulleCivetWebResponse   *response;
@@ -166,9 +175,8 @@
       }
       else
       {
-         response = [self webResponseForError:404
-                             errorDescription:@"Nothing here"
-                                forWebRequest:request];
+         // you could also subclass the server and override this
+         response = [self webResponseForWebRequest:request];
       }
    }
    @catch( NSException *localException)
@@ -191,21 +199,22 @@
 // civetweb request handling by URI is fairly limited, its better to implement
 // subhandlers in Objective-C later
 //
-static int   mulle_mongoose_handle_request( struct mg_connection *conn, void *p_server)
+static int   mulle_mongoose_handle_request( struct mg_connection *conn,
+                                            void *p_server)
 {
-   MulleCivetWebServer     *server;
-   MulleCivetWebRequest    *request;
-   NSAutoreleasePool       *pool;
-   NSUInteger              rval;
-   NSData                  *utf8Data;
-   NSString                *string;
-   NSMutableString         *tmp;
-   struct mg_request_info  *info;
+   MulleCivetWebServer      *server;
+   MulleCivetWebRequest     *request;
+   NSAutoreleasePool        *pool;
+   NSUInteger               rval;
+   NSData                   *utf8Data;
+   NSString                 *string;
+   NSMutableString          *tmp;
+   struct mg_request_info   *info;
 
    info   = (void *) mg_get_request_info( conn);
    server = p_server;
 
-   // need to use this instead of @autoreleasepool, since
+   // need to use an @autoreleasepool here, since
    // this thread may not have been setup for Objective-C yet
 
    @autoreleasepool
@@ -249,7 +258,8 @@ static int   mulle_mongoose_begin_request( struct mg_connection *conn)
 }
 
 
-static void   mulle_mongoose_end_request( struct mg_connection *conn, int reply_status_code)
+static void   mulle_mongoose_end_request( struct mg_connection *conn,
+                                          int reply_status_code)
 {
    MulleCivetWebServer      *server;
 
@@ -281,8 +291,11 @@ static void  *
    return( pool);  // could store something in TLS here
 }
 
+
 static void
-   mulle_mongoose_did_exit_thread( const struct mg_context *ctx, int thread_type, void *pool)
+   mulle_mongoose_did_exit_thread( const struct mg_context *ctx,
+                                   int thread_type,
+                                   void *pool)
 {
    MulleCivetWebServer   *server;
 
@@ -295,7 +308,6 @@ static void
 }
 
 
-
 static int   log_message( const struct mg_connection *conn, const char *message)
 {
    MulleCivetWebServer     *server;
@@ -304,26 +316,20 @@ static int   log_message( const struct mg_connection *conn, const char *message)
    if( ! server)
       return( 0);  // use default logger
 
-   [server log:[NSString stringWithCString:(char *) message]];
+   [server log:[NSString stringWithUTF8String:(char *) message]];
    return( 1);
-}
-
-
-- (void) log:(NSString *) s
-{
-   NSLog( @"%@", s);
 }
 
 
 - (NSArray *) openPortInfos
 {
    int                     n;
+   NSDictionary            *info;
    NSMutableArray          *array;
+   NSNumber                *no;
+   NSNumber                *yes;
    struct mg_server_port   *ports;
    struct mg_server_port   *sentinel;
-   NSNumber                *yes;
-   NSNumber                *no;
-   NSDictionary            *info;
 
    if( ! _ctx)
       return( nil);
@@ -363,6 +369,25 @@ static int   log_message( const struct mg_connection *conn, const char *message)
 
    return( array);
 }
+
+
+- (NSString *) optionForKey:(NSString *) key
+{
+   char  *s;
+
+   s = (char *) mg_get_option( _ctx, [key UTF8String]);
+   if( ! s)
+      return( nil);
+
+   return( [NSString stringWithUTF8String:s]);
+}
+
+
+- (char *) optionCStringForKeyCString:(char *) key
+{
+   return( (char *) mg_get_option( _ctx, key));
+}
+
 
 @end
 

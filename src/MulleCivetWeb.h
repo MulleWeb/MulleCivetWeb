@@ -8,7 +8,7 @@
  *
  *  version:  major, minor, patch
  */
-#define MULLE_CIVET_WEB_VERSION  ((0 << 20) | (7 << 8) | 56)
+#define MULLE_CIVET_WEB_VERSION  ((0 << 20) | (17 << 8) | 0)
 
 
 static inline unsigned int   MulleCivetWeb_get_version_major( void)
@@ -31,15 +31,13 @@ static inline unsigned int   MulleCivetWeb_get_version_patch( void)
 
 extern uint32_t   MulleCivetWeb_get_version( void);
 
-
-#import "MulleHTTP.h"
-#import "NSDate+MulleHTTP.h"
-#import "NSDate+MulleHTTP.h"
-#import "NSString+ListComponents.h"
-#import "NSURL+MulleCivetWeb.h"
-#import "NSURL+NSDictionary.h"
+// MEMO: don't taint MulleCivetWeb with NSURL
 
 #import "MulleCivetWebRequest.h"
 #import "MulleCivetWebResponse.h"
+#import "MulleCivetWebTextResponse.h"
 #import "MulleCivetWebServer.h"
 
+#import "MulleCivetWebRequest+NSURL.h"
+#import "NSURL+MulleCivetWeb.h"
+#import "NSURL+NSDictionary.h"

@@ -37,8 +37,6 @@
 
 #import "import-private.h"
 
-#import "NSURL+MulleCivetWeb.h"
-
 #include "civetweb.h"
 
 #include <signal.h>
@@ -73,7 +71,7 @@
 
 
 + (instancetype) webRequestWithServer:(MulleCivetWebServer *) server
-                                  URL:(NSURL *) url
+                                  URL:(id) url
                               headers:(NSDictionary *) headers
                           contentData:(NSData *) data
 {
@@ -102,6 +100,7 @@
 
 
 @end
+
 
 
 @implementation MulleCivetWebRequest : NSObject
@@ -182,79 +181,12 @@ static char   *find_header_value_in_request_info( struct mg_request_info *info, 
 }
 
 
-- (char *) findHeaderCStringForKeyCString:(char *) key
+- (char *) findHeaderValueAsCStringForKeyCString:(char *) key
 {
    struct mg_request_info   *info;
 
    info = getInfo( self);
    return( find_header_value_in_request_info( info, key));
-}
-
-
-// if this returns nil, then the response should be 414
-// ```
-// The HTTP protocol does not place any a priori limit on the length of a URI.
-// Servers MUST be able to handle the URI of any resource they serve, and
-// SHOULD be able to handle URIs of unbounded length if they provide
-// GET-based forms that could generate such URIs. A server SHOULD return 414
-// (Request-URI Too Long) status if a URI is longer than the server can
-// handle (see section 10.4.15).
-// ```
-// I don't even know what the limit of civitweb is though...
-//
-- (NSURL *) URL
-{
-   mulle_utf8_t             *uri;
-   size_t                   uri_len;
-   NSString                 *scheme;
-   NSString                 *resourceSpecifier;
-   struct mg_request_info   *info;
-   char                     *host;
-
-   if( _url)
-      return( _url);
-
-   info = getInfo( self);
-   uri  = (mulle_utf8_t *) info->local_uri;
-   if( ! uri)
-   {
-#if DEBUG
-      fprintf( stderr, "No URI in request\n");
-#endif
-      // [self log:@"empty URI"];
-      errno = EINVAL;
-      return( nil);
-   }
-
-   host = find_header_value_in_request_info( info, "Host");
-
-   //
-   // since we already have the whole string (somewhere in memory)
-   // and we duplicate it with NSURL again...
-   // we set an arbitrary limit of INT_MAX/4, which should leave
-   // INT_MAX/2 space for whatever we want to do
-   //
-   uri_len = mulle_utf8_strlen( uri);
-   if( uri_len > INT_MAX/4)
-   {
-      errno = EFBIG;
-      return( nil);
-   }
-
-   _url = [[[NSURL alloc] mulleInitHTTPWithEscapedURIUTF8Characters:uri
-                                                             length:uri_len
-                                                               host:host
-                                                              isSSL:info->is_ssl] autorelease];
-   if( ! _url)
-   {
-#if DEBUG
-      fprintf( stderr, "\"%.*s\" could not be parsed\n", (int) uri_len, uri);
-#endif
-      errno = EFAULT;
-      return( nil);
-   }
-
-   return( _url);
 }
 
 
@@ -322,6 +254,12 @@ static char   *find_header_value_in_request_info( struct mg_request_info *info, 
 
    _headers = dictionary;
    return( _headers);
+}
+
+
+- (NSString *) headerValueForKey:(NSString *) key
+{
+   return( [[self headers] objectForKey:key]);
 }
 
 

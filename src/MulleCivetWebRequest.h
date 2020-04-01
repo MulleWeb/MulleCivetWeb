@@ -35,23 +35,6 @@
 //
 #import "import.h"
 
-
-enum MulleHTTPRequestMethod
-{
-   MulleHTTPOther = -1,
-
-   MulleHTTPGet   = 0,
-   MulleHTTPPost  = 1,
-   MulleHTTPPut,
-   MulleHTTPDelete,
-   MulleHTTPHead
-
-   // there are quite a few more defined in WEBDAV and others
-   // (see MulleObjCInetFoundation/http_parser.h)
-   // should move these there
-};
-
-
 //
 // EPHEMERAL INSTANCES, ONLY VALID IN SCOPE.DON'T COPY OR RETAIN
 //
@@ -63,13 +46,12 @@ enum MulleHTTPRequestMethod
 {
    void           *_connection;  // struct mg_connection *
    void           *_info;        // struct mg_request_info *
-   NSURL          *_url;
+   id             _url;
    NSDictionary   *_headers;
    NSData         *_contentData;
 }
 
 - (enum MulleHTTPRequestMethod) method;
-- (NSURL *) URL;
 - (NSString *) HTTPVersion;
 - (NSString *) remoteUser;
 - (NSString *) remoteIP;
@@ -92,6 +74,8 @@ enum MulleHTTPRequestMethod
 - (NSUInteger) contentLength;
 - (NSDictionary *) headers;
 
+- (NSString *) headerValueForKey:(NSString *) key;
+
 // interface into struct mg_request_info
 - (char *) URICString;
 - (char *) queryCString;
@@ -99,7 +83,7 @@ enum MulleHTTPRequestMethod
 - (unsigned int) remotePort;
 - (BOOL) isSSL;
 - (void *) clientCertificate;
-- (char *) findHeaderCStringForKeyCString:(char *) key;
+- (char *) findHeaderValueAsCStringForKeyCString:(char *) key;
 
 @end
 
