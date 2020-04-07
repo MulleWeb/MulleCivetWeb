@@ -5,8 +5,8 @@
 # no git operations.
 #
 
-VERSIONFILE="src/MulleCivetWeb.h"
-VERSIONNAME="MULLE_CIVET_WEB_VERSION"
+# VERSIONFILE="src/<|PROJECT_NAME|>.h"
+# VERSIONNAME="<|PROJECT_UPCASE_IDENTIFIER|>_VERSION"
 
 #
 # Other files that get the version written into. Write only. Linefeed separated.
