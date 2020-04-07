@@ -660,6 +660,12 @@ export OBJC_COMPAT_URL="https://github.com/MulleFoundation/objc-compat.git"
 
 
 #
+# objc-compat branch: ${OBJC_COMPAT_BRANCH}
+#
+export OBJC_COMPAT_BRANCH="prerelease"
+
+
+#
 # MulleCurl nodetype: ${MULLE_CURL_NODETYPE:-tar}
 #
 export MULLE_CURL_NODETYPE="git"
