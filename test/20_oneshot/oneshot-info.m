@@ -3,6 +3,7 @@
 
 #include <MulleCivetWeb/civetweb.h>
 
+#include <unistd.h>
 
 
 @implementation MulleCivetWebResponse ( Test)
@@ -122,7 +123,8 @@ int   main( int argc, char *argv[])
    // fake a request manually
    memset( &info, 0, sizeof( info));
    info.request_method = "GET";
-   info.local_uri      = "/foo%20bar;param1;param2=OK?name=foo%20bar";
+   info.local_uri      = "/foo%20bar;param1;param2=OK";
+   info.query_string   = "name=foo%20bar";
    info.http_version   = "1.1";
    info.content_length = -1;
    info.remote_port    = 1848;

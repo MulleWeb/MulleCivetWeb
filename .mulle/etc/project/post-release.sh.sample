@@ -1,0 +1,10 @@
+# -- Post Release --
+# Push stuff into debian repository
+#
+
+post_release()
+{
+   # as technical flags like -n are sent over, rexekutor is fine
+   rexekutor mulle-project-debian "$@"
+}
+
