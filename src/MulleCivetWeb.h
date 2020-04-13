@@ -8,7 +8,7 @@
  *
  *  version:  major, minor, patch
  */
-#define MULLE_CIVET_WEB_VERSION  ((0 << 20) | (17 << 8) | 0)
+#define MULLE_CIVET_WEB_VERSION  ((0 << 20) | (17 << 8) | 1)
 
 
 static inline unsigned int   MulleCivetWeb_get_version_major( void)
