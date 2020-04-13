@@ -1,9 +1,31 @@
-# 🦡 MulleCivetWeb
+# MulleCivetWeb
+
+#### 🦊 HTTP Server for mulle-objc
 
 MulleCivetWeb is a "WebServer as a library". It is based on
-[civetweb](//github.com/civetweb/civetweb). You typically interact with
-MulleCivetWeb by creating a webserver object, and attaching your request
-handler to it:
+[civetweb](//github.com/civetweb/civetweb).
+
+Build Status | Release Version
+-------------|-----------------------------------
+[![Build Status](https://travis-ci.org/MulleWeb/MulleCivetWeb.svg?branch=release)](https://travis-ci.org/MulleWeb/MulleCivetWeb) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/MulleWeb/MulleCivetWeb.svg) [![Build Status](https://travis-ci.org/MulleWeb/MulleCivetWeb.svg?branch=release)](https://travis-ci.org/MulleWeb/MulleCivetWeb)
+
+## About
+
+MulleCivetWeb add the following principal classes:
+
+Class                       | Description
+----------------------------|-----------
+`MulleCivetWebServer`       | The WebServer class. Add your request handler to it.
+`MulleCivetWebRequest`      | Requests as received by the MulleCivetWebServer
+`MulleCivetWebResponse`     | Responses returned by a request handler. They contain header information and the reponse content.
+`MulleCivetWebTextResponse` | Subclass of MulleCivetWebResponse to produce plain text, JSON, HTML...
+
+#### Example
+
+You typically interact with MulleCivetWeb by creating a
+**MulleCivetWebServer** object, and by attaching a
+**MulleCivetWebRequestHandler** to it:
+
 
 ``` objc
 @interface MyRequestHandler : NSObject < MulleCivetWebRequestHandler>
@@ -49,31 +71,30 @@ The request handler will receive `MulleCivetWebRequests` and return
 
 That's it.
 
-Class                       | Description
-----------------------------|-----------
-`MulleCivetWebServer`       | The WebServer class. Add your request handler to it.
-`MulleCivetWebRequest`      | Requests as received by the MulleCivetWebServer
-`MulleCivetWebResponse`     | Responses returned by a request handler. They contain header information and the reponse content.
-`MulleCivetWebTextResponse` | Subclass of MulleCivetWebResponse to produce plain text, JSON, HTML...
 
+## Add
 
-## Build
-
-This is a [mulle-sde](https://mulle-sde.github.io/) project.
-
-It has it's own virtual environment, that will be automatically setup for you
-once you enter it with:
+Use [mulle-sde](//github.com/mulle-sde) to add MulleCivetWeb to your project:
 
 ```
-mulle-sde MulleCivetWeb
+mulle-sde dependency add --objc --github MulleWeb MulleCivetWeb
 ```
 
-Now you can let **mulle-sde** fetch the required dependencies and build the
-project for you:
+## Install
+
+Use [mulle-sde](//github.com/mulle-sde) to build and install MulleCivetWeb and
+all its dependencies:
 
 ```
-mulle-sde craft
+mulle-sde install --objc --prefix /usr/local \
+   https://github.com/MulleWeb/MulleCivetWeb/archive/latest.tar.gz
 ```
+
+## Acknowledgements
+
+MulleZlib links against [civetweb](https://github.com/civetweb/civetweb).
+civetweb was forned from the MIT version of Mongoose, whose original author
+is Sergey Lyubka.
 
 
 ## Author
