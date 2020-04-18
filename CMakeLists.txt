@@ -31,6 +31,7 @@ if( LINK_PHASE)
    include( Dependencies OPTIONAL)
 endif()
 
+add_compile_options( -DDEBUG_TRACE_STREAM=stderr)
 include( Library)
 include( InstallLibrary)
 include( FinalOutput OPTIONAL)
