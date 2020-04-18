@@ -21,3 +21,5 @@ mulle-objc/travis;extra
 mulle-c/travis;extra
 mulle-sde/travis;extra
 mulle-sde/mulle-project;extra
+foundation/travis;extra
+mulle-foundation/travis;extra
