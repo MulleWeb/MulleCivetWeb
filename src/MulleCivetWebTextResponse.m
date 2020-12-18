@@ -79,7 +79,7 @@
 
    mulle_vararg_start( args, format);
    [_content mulleAppendFormat:format
-                     arguments:args];
+               mulleVarargList:args];
    mulle_vararg_end( args);
 }
 

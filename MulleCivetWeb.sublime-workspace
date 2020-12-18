@@ -714,6 +714,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"arguments:(va_list) args",
 			"sendChunkedHeaderData",
 			"MulleObjCInstanceGetAllocator",
 			"return( header->value);",

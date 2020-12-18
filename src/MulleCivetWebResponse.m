@@ -377,5 +377,3 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 }
 
 @end
-
-

@@ -129,7 +129,7 @@ static NSCharacterSet  *getURLQueryAllowedWithoutAmpersandAndEqualCharacterSet( 
    NSString          *sep;
    NSCharacterSet    *characterSet;
 
-   s   = [NSMutableString string];
+   s   = [NSMutableString object];
    sep = @"";
    for( key in self)
    {
