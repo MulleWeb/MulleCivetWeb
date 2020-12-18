@@ -12,8 +12,12 @@
 #ifndef _MulleCivetWeb_import_private_h__
 #define _MulleCivetWeb_import_private_h__
 
-#include "_MulleCivetWeb-include-private.h"
-
 /* no headers */
+
+#ifdef __has_include
+# if __has_include( "_MulleCivetWeb-include.h")
+#  include "_MulleCivetWeb-include-private.h"
+# endif
+#endif
 
 #endif

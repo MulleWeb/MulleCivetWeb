@@ -8,7 +8,7 @@ endif()
 
 #
 # Generated from sourcetree: MulleObjCHTTPFoundation;no-singlephase;
-# Disable with: `mulle-sourcetree mark MulleObjCHTTPFoundation no-link`
+# Disable with: `mulle-sourcetree mark MulleObjCHTTPFoundation no-header`
 #
 if( NOT MULLE_OBJC_HTTP_FOUNDATION_LIBRARY)
    find_library( MULLE_OBJC_HTTP_FOUNDATION_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}MulleObjCHTTPFoundation${CMAKE_STATIC_LIBRARY_SUFFIX} MulleObjCHTTPFoundation NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)
