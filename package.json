@@ -1,0 +1,17 @@
+{
+   "name" : "MulleCivetWeb",
+   "version" : "0.17.2",
+   "description" : "🦊 HTTP Server for mulle-objc",
+   "homepage" : "https://github.com/MulleWeb/MulleCivetWeb",
+   "bugs" : "https://github.com/MulleWeb/MulleCivetWeb/issues",
+   "keywords" : [],
+   "license" : "UNLICENSED",
+   "repository" : {
+      "type" : "git",
+      "url" : "MulleWeb/MulleCivetWeb"
+   },
+   "dependencies" : {
+      "src/civetweb" : "mulle-nat/civetweb",
+      "MulleObjCHTTPFoundation" : "MulleWeb/MulleObjCHTTPFoundation"
+   }
+}
