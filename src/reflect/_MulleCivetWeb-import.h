@@ -16,15 +16,10 @@
 //    remove:             `mulle-sourcetree mark MulleObjCHTTPFoundation no-header`
 //    rename:             `mulle-sde dependency|library set MulleObjCHTTPFoundation include whatever.h`
 //    toggle #import:     `mulle-sourcetree mark MulleObjCHTTPFoundation [no-]import`
-//    toggle localheader: `mulle-sourcetree mark MulleObjCHTTPFoundation [no-]localheader`
 //    toggle public:      `mulle-sourcetree mark MulleObjCHTTPFoundation [no-]public`
 //    toggle optional:    `mulle-sourcetree mark MulleObjCHTTPFoundation [no-]require`
 //    remove for os:      `mulle-sourcetree mark MulleObjCHTTPFoundation no-os-<osname>`
-# if defined( __has_include) && __has_include("MulleObjCHTTPFoundation.h")
-#   import "MulleObjCHTTPFoundation.h"   // MulleObjCHTTPFoundation
-# else
-#   import <MulleObjCHTTPFoundation/MulleObjCHTTPFoundation.h>   // MulleObjCHTTPFoundation
-# endif
+# import <MulleObjCHTTPFoundation/MulleObjCHTTPFoundation.h>   // MulleObjCHTTPFoundation
 
 #ifdef __has_include
 # if __has_include( "_MulleCivetWeb-include.h")
