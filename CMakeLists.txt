@@ -33,6 +33,8 @@ if( LINK_PHASE)
 endif()
 
 add_compile_options( -DDEBUG_TRACE_STREAM=stderr)
+add_compile_options( -DOPENSSL_API_1_0)
+
 include( Library)
 include( InstallLibrary)
 include( FinalOutput OPTIONAL)
