@@ -7,19 +7,19 @@ export PROJECT_NAME="MulleCivetWeb"
 #
 #
 #
-export PROJECT_IDENTIFIER="MulleCivetWeb"
 
-
-#
-#
-#
-export PROJECT_DOWNCASE_IDENTIFIER="mulle_civet_web"
 
 
 #
 #
 #
-export PROJECT_UPCASE_IDENTIFIER="MULLE_CIVET_WEB"
+
+
+
+#
+#
+#
+
 
 
 #

@@ -5,9 +5,25 @@
 MulleCivetWeb is a "WebServer as a library". It is based on
 [civetweb](//github.com/civetweb/civetweb).
 
-Build Status | Release Version
--------------|-----------------------------------
-[![Build Status](https://travis-ci.org/MulleWeb/MulleCivetWeb.svg?branch=release)](https://travis-ci.org/MulleWeb/MulleCivetWeb) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/MulleWeb/MulleCivetWeb.svg) [![Build Status](https://travis-ci.org/MulleWeb/MulleCivetWeb.svg?branch=release)](https://travis-ci.org/MulleWeb/MulleCivetWeb)
+### You are here
+
+```
+   .------------------------------.
+   | MulleWebServer               |
+   '------------------------------'
+   .================.
+   | CivetWeb       |
+   '================'
+   .----------------..------------.
+   | HTTP           || JSMN       |
+   '----------------''------------'
+   .----------------..------------.
+   | Inet           || Plist      |
+   '----------------''------------'
+   .------..----------------------.
+   | Lock || Standard             |
+   '------''----------------------'
+```
 
 ## About
 
