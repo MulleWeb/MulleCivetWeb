@@ -23,6 +23,18 @@
 //        (use mulle-sourcetree-to-c --unames for known values)
 #import <MulleObjCHTTPFoundation/MulleObjCHTTPFoundation.h>   // MulleObjCHTTPFoundation
 
+// You can tweak the following #import with these commands.
+// (Use 0EA9E991-4AD7-4E31-A862-647FAC88B146 instead of MulleFoundation if there are duplicate entries)
+//    remove:             `mulle-sourcetree mark MulleFoundation no-header`
+//    rename:             `mulle-sde dependency|library set MulleFoundation include whatever.h`
+//    reorder:            `mulle-sourcetree move MulleFoundation <up|down>`
+//    toggle #import:     `mulle-sourcetree mark MulleFoundation [no-]import`
+//    toggle public:      `mulle-sourcetree mark MulleFoundation [no-]public`
+//    toggle optional:    `mulle-sourcetree mark MulleFoundation [no-]require`
+//    remove for platform:`mulle-sourcetree mark MulleFoundation no-platform-<uname>`
+//        (use mulle-sourcetree-to-c --unames for known values)
+#import <MulleFoundation/MulleFoundation.h>   // MulleFoundation
+
 #ifdef __has_include
 # if __has_include( "_MulleCivetWeb-include.h")
 #  include "_MulleCivetWeb-include.h"
