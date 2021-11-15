@@ -156,7 +156,7 @@ int   main( int argc, char *argv[])
       server  = [[[MulleCivetWebServer alloc] initWithCStringOptions:options] autorelease];
       [server setRequestHandler:handler];
 
-      fprintf( stderr, "%s\n", [[server openPortInfos] cStringDescription]);
+      fprintf( stderr, "%s\n", [[server openPortInfos] UTF8String]);
 
       if( mode == 's')
       {

@@ -73,7 +73,7 @@
 
    if( ! _server_name[ 0])
       snprintf( _server_name, sizeof( _server_name), "%s (civetweb v. %.32s)",
-               [NSStringFromClass( [self class]) cStringDescription],
+               [NSStringFromClass( [self class]) UTF8String],
                mg_version());
 
    callbacks.log_message   = &log_message;
