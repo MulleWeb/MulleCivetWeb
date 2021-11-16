@@ -3,9 +3,9 @@
 
 @interface NSURL( MulleCivetWeb)
 
-- (instancetype) mulleInitHTTPWithEscapedURIUTF8Characters:(mulle_utf8_t *) uri
+- (instancetype) mulleInitHTTPWithEscapedURIUTF8Characters:(char *) uri
                                                     length:(NSUInteger) uri_len
-                                escapedQueryUTF8Characters:(mulle_utf8_t *) query
+                                escapedQueryUTF8Characters:(char *) query
                                                     length:(NSUInteger) query_len
                                                       host:(char *) host
                                                      isSSL:(BOOL) isSSL;

@@ -350,7 +350,7 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    // astara/maupin. 1200 looks OK as we would like to emit a
    // pretty full packet as early as possible here
    stream = [[[MulleObjCBufferedOutputStream alloc] initWithOutputStream:self
-                                                             flushLength:1200] autorelease];
+                                                              bufferSize:1200] autorelease];
    _hasCreatedStream = YES;
    return( stream);
 }
