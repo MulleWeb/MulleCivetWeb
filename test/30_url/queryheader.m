@@ -14,11 +14,11 @@ static void   test( NSDictionary *info)
       s = [NSString stringWithFormat:@"%@?%@", s, query];
    url = [NSURL URLWithString:s];
 
-   printf( "%s\n", [url cStringDescription]);
+   printf( "%s\n", [url UTF8String]);
 
    headers = [url mulleQueryDictionary];
    if( info && ! [info isEqualToDictionary:headers])
-      printf( "FAIL %s <> %s\n", [info cStringDescription], [headers cStringDescription]);
+      printf( "FAIL %s <> %s\n", [info UTF8String], [headers UTF8String]);
 }
 
 

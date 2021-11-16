@@ -5,9 +5,9 @@
 
 @implementation NSURL( MulleCivetWeb)
 
-- (instancetype) mulleInitHTTPWithEscapedURIUTF8Characters:(mulle_utf8_t *) uri
+- (instancetype) mulleInitHTTPWithEscapedURIUTF8Characters:(char *) uri
                                                     length:(NSUInteger) uri_len
-                                escapedQueryUTF8Characters:(mulle_utf8_t *) query
+                                escapedQueryUTF8Characters:(char *) query
                                                     length:(NSUInteger) query_len
                                                       host:(char *) host
                                                      isSSL:(BOOL) isSSL
@@ -15,14 +15,14 @@
    NSString                           *s;
    NSCharacterSet                     *characterSet;
    struct MulleEscapedURLPartsUTF8    parts;
-   mulle_utf8_t                       *parameter;
+   char                               *parameter;
 
    memset( &parts, 0, sizeof( parts));
 
-   parts.scheme.characters = (mulle_utf8_t *) (isSSL ? "http" : "https");
+   parts.scheme.characters = (isSSL ? "http" : "https");
    parts.scheme.length     = -1;
 
-   parts.escaped_host.characters = (mulle_utf8_t *) host;
+   parts.escaped_host.characters = host;
    parts.escaped_host.length     = -1;
 
    parts.escaped_path.characters = uri;
