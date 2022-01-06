@@ -28,7 +28,7 @@
    parts.escaped_path.characters = uri;
    parts.escaped_path.length     = uri_len;
 
-   parameter = mulle_utf8_strnchr( uri, uri_len, ';');
+   parameter = (char *) mulle_utf8_strnchr( uri, uri_len, ';');
    if( parameter)
    {
       parts.escaped_path.length = parameter - uri;

@@ -5,25 +5,11 @@
 MulleCivetWeb is a "WebServer as a library". It is based on
 [civetweb](//github.com/civetweb/civetweb).
 
+
 ### You are here
 
-```
-   .------------------------------.
-   | MulleWebServer               |
-   '------------------------------'
-   .================.
-   | CivetWeb       |
-   '================'
-   .----------------..------------.
-   | HTTP           || JSMN       |
-   '----------------''------------'
-   .----------------..------------.
-   | Inet           || Plist      |
-   '----------------''------------'
-   .------..----------------------.
-   | Lock || Standard             |
-   '------''----------------------'
-```
+![Overview](overview.dot.svg)
+
 
 ## About
 
