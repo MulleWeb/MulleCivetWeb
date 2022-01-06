@@ -389,5 +389,13 @@ static int   log_message( const struct mg_connection *conn, const char *message)
 }
 
 
+
+// will be overridden later, just used by tests
+- (void) log:(NSString *) s
+{
+   mulle_fprintf( stderr, "%@\n", s ? s : @"???");
+}
+
+
 @end
 

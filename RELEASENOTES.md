@@ -1,3 +1,7 @@
+### 0.17.6
+
+* Various small improvements
+
 ### 0.17.5
 
 * fix sourcetree

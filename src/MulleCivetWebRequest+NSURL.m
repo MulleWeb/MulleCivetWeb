@@ -62,9 +62,9 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
 
 - (NSURL *) URL
 {
-   mulle_utf8_t             *uri;
+   char                     *uri;
    size_t                   uri_len;
-   mulle_utf8_t             *query;
+   char                     *query;
    size_t                   query_len;
    NSString                 *scheme;
    NSString                 *resourceSpecifier;
@@ -75,7 +75,7 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
       return( _url);
 
    info = getInfo( self);
-   uri  = (mulle_utf8_t *) info->local_uri;
+   uri  = (char *) info->local_uri;
    if( ! uri)
    {
 #if DEBUG
@@ -97,7 +97,7 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
    // we set an arbitrary limit of INT_MAX/4, which should leave
    // INT_MAX/2 space for whatever we want to do
    //
-   uri_len = mulle_utf8_strlen( uri);
+   uri_len = mulle_utf8_strlen( (mulle_utf8_t *) uri);
    if( uri_len > INT_MAX/4)
    {
       errno = EFBIG;
@@ -105,10 +105,10 @@ static inline struct mg_request_info   *getInfo( MulleCivetWebRequest *self)
    }
 
    query_len = 0;
-   query     = (mulle_utf8_t *) info->query_string;
+   query     = (char *) info->query_string;
    if( query)
    {
-      query_len = mulle_utf8_strlen( query);
+      query_len = mulle_utf8_strlen( (mulle_utf8_t *) query);
       if( query_len > INT_MAX/4)
       {
          errno = EFBIG;
