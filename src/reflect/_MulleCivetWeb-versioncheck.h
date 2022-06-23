@@ -3,16 +3,16 @@
  *   Any edits will be lost.
  */
 #if defined( MULLE_FOUNDATION_VERSION)
-# if MULLE_FOUNDATION_VERSION < ((0 << 20) | (20 << 8) | 0)
+# if MULLE_FOUNDATION_VERSION < ((0 << 20) | (21 << 8) | 0)
 #  error "MulleFoundation is too old"
 # endif
-# if MULLE_FOUNDATION_VERSION >= ((0 << 20) | (21 << 8) | 0)
+# if MULLE_FOUNDATION_VERSION >= ((0 << 20) | (22 << 8) | 0)
 #  error "MulleFoundation is too new"
 # endif
 #endif
 
 #if defined( MULLE_OBJC_HTTP_FOUNDATION_VERSION)
-# if MULLE_OBJC_HTTP_FOUNDATION_VERSION < ((0 << 20) | (18 << 8) | 2)
+# if MULLE_OBJC_HTTP_FOUNDATION_VERSION < ((0 << 20) | (18 << 8) | 3)
 #  error "MulleObjCHTTPFoundation is too old"
 # endif
 # if MULLE_OBJC_HTTP_FOUNDATION_VERSION >= ((0 << 20) | (19 << 8) | 0)
