@@ -78,7 +78,7 @@ That's it.
 
 Use [mulle-sde](//github.com/mulle-sde) to add MulleCivetWeb to your project:
 
-```
+``` sh
 mulle-sde dependency add --objc --github MulleWeb MulleCivetWeb
 ```
 
@@ -87,7 +87,7 @@ mulle-sde dependency add --objc --github MulleWeb MulleCivetWeb
 Use [mulle-sde](//github.com/mulle-sde) to build and install MulleCivetWeb and
 all its dependencies:
 
-```
+``` sh
 mulle-sde install --objc --prefix /usr/local \
    https://github.com/MulleWeb/MulleCivetWeb/archive/latest.tar.gz
 ```
