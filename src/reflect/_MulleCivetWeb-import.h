@@ -13,25 +13,25 @@
 
 // You can tweak the following #import with these commands.
 // (Use 132A1362-915C-4414-824F-6D0AB839A371 instead of MulleObjCHTTPFoundation if there are duplicate entries)
-//    remove:             `mulle-sde dependency mark MulleObjCHTTPFoundation no-header`
-//    rename:             `mulle-sde dependency|library set MulleObjCHTTPFoundation include whatever.h`
-//    reorder:            `mulle-sde dependency move MulleObjCHTTPFoundation <up|down>`
+//    remove #import: : `mulle-sde dependency mark MulleObjCHTTPFoundation no-header`
+//    rename:              `mulle-sde dependency|library set MulleObjCHTTPFoundation include whatever.h`
+//    reorder:             `mulle-sde dependency move MulleObjCHTTPFoundation <up|down>`
 //    toggle #import:     `mulle-sde dependency mark MulleObjCHTTPFoundation [no-]import`
-//    toggle public:      `mulle-sde dependency mark MulleObjCHTTPFoundation [no-]public`
-//    toggle optional:    `mulle-sde dependency mark MulleObjCHTTPFoundation [no-]require`
-//    remove for platform:`mulle-sde dependency mark MulleObjCHTTPFoundation no-platform-<uname>`
+//    toggle public:       `mulle-sde dependency mark MulleObjCHTTPFoundation [no-]public`
+//    toggle optional:     `mulle-sde dependency mark MulleObjCHTTPFoundation [no-]require`
+//    remove for platform: `mulle-sde dependency mark MulleObjCHTTPFoundation no-platform-<uname>`
 //        (use `mulle-sourcetree-to-c --unames` to list known values)
 #import <MulleObjCHTTPFoundation/MulleObjCHTTPFoundation.h>   // MulleObjCHTTPFoundation
 
 // You can tweak the following #import with these commands.
 // (Use 0EA9E991-4AD7-4E31-A862-647FAC88B146 instead of MulleFoundation if there are duplicate entries)
-//    remove:             `mulle-sde dependency mark MulleFoundation no-header`
-//    rename:             `mulle-sde dependency|library set MulleFoundation include whatever.h`
-//    reorder:            `mulle-sde dependency move MulleFoundation <up|down>`
+//    remove #import: : `mulle-sde dependency mark MulleFoundation no-header`
+//    rename:              `mulle-sde dependency|library set MulleFoundation include whatever.h`
+//    reorder:             `mulle-sde dependency move MulleFoundation <up|down>`
 //    toggle #import:     `mulle-sde dependency mark MulleFoundation [no-]import`
-//    toggle public:      `mulle-sde dependency mark MulleFoundation [no-]public`
-//    toggle optional:    `mulle-sde dependency mark MulleFoundation [no-]require`
-//    remove for platform:`mulle-sde dependency mark MulleFoundation no-platform-<uname>`
+//    toggle public:       `mulle-sde dependency mark MulleFoundation [no-]public`
+//    toggle optional:     `mulle-sde dependency mark MulleFoundation [no-]require`
+//    remove for platform: `mulle-sde dependency mark MulleFoundation no-platform-<uname>`
 //        (use `mulle-sourcetree-to-c --unames` to list known values)
 #import <MulleFoundation/MulleFoundation.h>   // MulleFoundation
 

@@ -316,7 +316,7 @@ static int   log_message( const struct mg_connection *conn, const char *message)
    if( ! server)
       return( 0);  // use default logger
 
-   [server log:[NSString stringWithUTF8String:(char *) message]];
+   [server log:@"%s", message];
    return( 1);
 }
 
@@ -391,9 +391,13 @@ static int   log_message( const struct mg_connection *conn, const char *message)
 
 
 // will be overridden later, just used by tests
-- (void) log:(NSString *) s
+- (void) log:(NSString *) format, ...
 {
-   mulle_fprintf( stderr, "%@\n", s ? s : @"???");
+   mulle_vararg_list  args;
+
+   mulle_vararg_start( args, format);
+   mulle_mvfprintf( stderr, [format UTF8String], args);
+   mulle_vararg_end( args);
 }
 
 

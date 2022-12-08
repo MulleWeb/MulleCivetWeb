@@ -1,3 +1,7 @@
+### 0.17.8
+
+* Various small improvements
+
 ### 0.17.7
 
 * moved generic headers into src/generic
