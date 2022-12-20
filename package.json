@@ -8,7 +8,7 @@
    "license" : "UNLICENSED",
    "repository" : {
       "type" : "git",
-      "url" : "MulleWeb/MulleCivetWeb"
+      "url" : "github:MulleWeb/MulleCivetWeb"
    },
    "dependencies" : {
       "civetweb" : "git://github.com/mulle-nat/civetweb",
