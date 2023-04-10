@@ -55,8 +55,10 @@
 
 
 - (instancetype) initWithHTTPVersion:(NSString *) s
-                          connection:(void *) connection
+                          connection:(void *) v_connection
 {
+   struct mg_connection *connection = v_connection;
+
    if( ! connection)
    {
       [self release];

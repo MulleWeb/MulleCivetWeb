@@ -17,11 +17,11 @@ struct mg_request_info;
                               headers:(NSDictionary *) headers
                           contentData:(NSData *) data;
 
-- (instancetype) initWithConnection:(struct mg_connection *) conn;
+- (instancetype) initWithConnection:(void *) conn;
 
 // can be useful for testing
 - (instancetype) initWithRequestInfo:(struct mg_request_info *) info;
 
-- (struct mg_connection *) connection;
+- (void *) connection;
 
 @end

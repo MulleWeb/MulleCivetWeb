@@ -1,5 +1,5 @@
 #import <MulleCivetWeb/MulleCivetWeb.h>
-#import <MulleCivetWeb/private/MulleCivetWebRequest+Private.h>
+#import <MulleCivetWeb/MulleCivetWebRequest+Private.h>
 
 #include <MulleCivetWeb/civetweb.h>
 

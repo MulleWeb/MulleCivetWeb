@@ -46,7 +46,7 @@
 
 // only to be used by the webserver
 
-- (id) initWithConnection:(struct mg_connection *) connection
+- (id) initWithConnection:(void *) connection
 {
    struct mg_request_info   *info;
 
@@ -112,7 +112,7 @@
 
 
 // struct mg_connection
-- (struct mg_connection *) connection
+- (void *) connection
 {
    return( _connection);
 }
