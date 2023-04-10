@@ -1,0 +1,7 @@
+## Acknowledgements
+
+MulleZlib links against [civetweb](https://github.com/civetweb/civetweb).
+civetweb was forned from the MIT version of Mongoose, whose original author
+is Sergey Lyubka.
+
+

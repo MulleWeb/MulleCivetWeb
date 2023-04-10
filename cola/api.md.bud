@@ -1,0 +1,12 @@
+## API
+
+MulleCivetWeb add the following principal classes:
+
+| Class                       | Description
+|-----------------------------|-----------
+| `MulleCivetWebServer`       | The WebServer class. Add your request handler to it.
+| `MulleCivetWebRequest`      | Requests as received by the MulleCivetWebServer
+| `MulleCivetWebResponse`     | Responses returned by a request handler. They contain header | information and the reponse content.
+| `MulleCivetWebTextResponse` | Subclass of MulleCivetWebResponse to produce plain text, JSON, | HTML...
+
+

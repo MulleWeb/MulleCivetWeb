@@ -1,6 +1,6 @@
 #ifdef __MULLE_OBJC__
 # import <MulleCivetWeb/MulleCivetWeb.h>
-# import <MulleCivetWeb/private/MulleCivetWebRequest+Private.h>
+# import <MulleCivetWeb/MulleCivetWebRequest+Private.h>
 # include <mulle-testallocator/mulle-testallocator.h>
 #else
 # import <Foundation/Foundation.h>

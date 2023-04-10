@@ -1,6 +1,6 @@
 #import <MulleCivetWeb/MulleCivetWeb.h>
 #import <MulleCurl/MulleCurl.h>
-#import <MulleCivetWeb/private/MulleCivetWebRequest+Private.h>
+#import <MulleCivetWeb/MulleCivetWebRequest+Private.h>
 
 #include <MulleCivetWeb/civetweb.h>
 #include <stdlib.h>

@@ -2,27 +2,21 @@
 
 #### 🦊 HTTP Server for mulle-objc
 
+
 MulleCivetWeb is a "WebServer as a library". It is based on
 [civetweb](//github.com/civetweb/civetweb).
 
 
-### You are here
 
-![Overview](overview.dot.svg)
+| Release Version                                       | Release Notes
+|-------------------------------------------------------|--------------
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag//MulleCivetWeb.svg?branch=release) [![Build Status](https://github.com//MulleCivetWeb/workflows/CI/badge.svg?branch=release)](//github.com//MulleCivetWeb/actions)| [RELEASENOTES](RELEASENOTES.md) |
 
 
-## About
 
-MulleCivetWeb add the following principal classes:
 
-Class                       | Description
-----------------------------|-----------
-`MulleCivetWebServer`       | The WebServer class. Add your request handler to it.
-`MulleCivetWebRequest`      | Requests as received by the MulleCivetWebServer
-`MulleCivetWebResponse`     | Responses returned by a request handler. They contain header information and the reponse content.
-`MulleCivetWebTextResponse` | Subclass of MulleCivetWebResponse to produce plain text, JSON, HTML...
 
-#### Example
+## Example
 
 You typically interact with MulleCivetWeb by creating a
 **MulleCivetWebServer** object, and by attaching a
@@ -74,33 +68,73 @@ The request handler will receive `MulleCivetWebRequests` and return
 That's it.
 
 
+
+## API
+
+MulleCivetWeb add the following principal classes:
+
+| Class                       | Description
+|-----------------------------|-----------
+| `MulleCivetWebServer`       | The WebServer class. Add your request handler to it.
+| `MulleCivetWebRequest`      | Requests as received by the MulleCivetWebServer
+| `MulleCivetWebResponse`     | Responses returned by a request handler. They contain header | information and the reponse content.
+| `MulleCivetWebTextResponse` | Subclass of MulleCivetWebResponse to produce plain text, JSON, | HTML...
+
+
+
+
+## Overview
+![Overview](overview.dot.svg)
+
+| Requirement                                  | Description
+|----------------------------------------------|-----------------------
+| [MulleObjCHTTPFoundation](https://github.com/MulleWeb/MulleObjCHTTPFoundation)             | 🎫 HTTP and HTML utility methods and classes for mulle-objc
+| [MulleFoundation](https://github.com/MulleFoundation/MulleFoundation)             | 💍 Umbrella library for the MulleFoundation
+| [mulle-objc-list](https://github.com/mulle-objc/mulle-objc-list)             | 📒 Lists mulle-objc runtime information contained in executables.
+
+
 ## Add
 
 Use [mulle-sde](//github.com/mulle-sde) to add MulleCivetWeb to your project:
 
 ``` sh
-mulle-sde dependency add --objc --github MulleWeb MulleCivetWeb
+mulle-sde add github:MulleWeb/MulleCivetWeb
 ```
 
 ## Install
 
-Use [mulle-sde](//github.com/mulle-sde) to build and install MulleCivetWeb and
-all its dependencies:
+### Install with mulle-sde
+
+Use [mulle-sde](//github.com/mulle-sde) to build and install MulleCivetWeb and all dependencies:
 
 ``` sh
-mulle-sde install --objc --prefix /usr/local \
-   https://github.com/MulleWeb/MulleCivetWeb/archive/latest.tar.gz
+mulle-sde install --prefix /usr/local \
+   https://github.com//MulleCivetWeb/archive/latest.tar.gz
 ```
 
-## Acknowledgements
+### Manual Installation
 
-MulleZlib links against [civetweb](https://github.com/civetweb/civetweb).
-civetweb was forned from the MIT version of Mongoose, whose original author
-is Sergey Lyubka.
+Install the [requirements](#Overview) and then install
+**MulleCivetWeb**
+with [cmake](https://cmake.org). Here `/usr/local` is chosen as the install
+prefix:
+
+``` sh
+cmake -B build \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DCMAKE_PREFIX_PATH=/usr/local \
+      -DCMAKE_BUILD_TYPE=Release &&
+cmake --build build --config Release &&
+cmake --install build --config Release
+```
+
+## Platforms and Compilers
+
+All platforms and compilers supported by
+[mulle-c11](//github.com/mulle-c/mulle-c11).
 
 
 ## Author
 
-[Nat!](//www.mulle-kybernetik.com/weblog) for
-[Mulle kybernetiK](//www.mulle-kybernetik.com) and
-[Codeon GmbH](//www.codeon.de)
+[Nat!](https://mulle-kybernetik.com/weblog) for Mulle kybernetiK
+

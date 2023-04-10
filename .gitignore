@@ -38,3 +38,6 @@ test/50_chunked/stupid-chunked-server.c
 .mulle-make-build-dir
 version.old
 .ackrc
+wilted/
+mulle-template-composer-*
+mulle-markdown-preview-*.html

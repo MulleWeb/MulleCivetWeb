@@ -46,7 +46,7 @@
 @implementation MulleCivetWebTextResponse
 
 - (instancetype) initWithHTTPVersion:(NSString *) s
-                          connection:(struct mg_connection *) connection
+                          connection:(void *) connection
 {
    self = [super initWithHTTPVersion:s
                           connection:connection];

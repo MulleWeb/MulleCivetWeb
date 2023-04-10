@@ -1,0 +1,52 @@
+## Example
+
+You typically interact with MulleCivetWeb by creating a
+**MulleCivetWebServer** object, and by attaching a
+**MulleCivetWebRequestHandler** to it:
+
+
+``` objc
+@interface MyRequestHandler : NSObject < MulleCivetWebRequestHandler>
+@end
+
+
+int   main( int argc, char *argv[])
+{
+   MulleCivetWebServer  *server;
+   MyRequestHandler     *handler;
+
+   server  = [MulleCivetWebServer object];
+
+   // the server is already running now!
+   handler = [MyRequestHandler object];
+   [server setRequestHandler:handler];
+
+   return( 0);
+}
+```
+
+The request handler will receive `MulleCivetWebRequests` and return
+`MulleCivetWebResponses`:
+
+``` objc
+@implementation MyRequestHandler
+
+- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request
+{
+   MulleCivetWebTextResponse   *response; // subclass of MulleCivetWebResponse
+
+   response = [MulleCivetWebTextResponse webResponseForWebRequest:request];
+   [response appendFormat:@"Method is %@\n",
+                     [request method] == MulleHTTPPost ? @"POST" : @"GET"]
+   [response appendFormat:@"Accept-Encoding is %@",
+                     [request headerValueForKey:MulleHTTPAcceptEncodingKey]];
+   [response appendString:@"Hello World"];
+   return( response);
+}
+
+@end
+```
+
+That's it.
+
+
