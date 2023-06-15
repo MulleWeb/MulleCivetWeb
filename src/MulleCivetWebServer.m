@@ -65,8 +65,6 @@
 - (instancetype) initWithCStringOptions:(char **) options
 {
    struct mg_callbacks   callbacks;
-   NSString              *dir;
-   char                  **p;
 
    /* Start Mongoose */
    memset( &callbacks, 0, sizeof(callbacks));
@@ -115,7 +113,6 @@
 - (MulleCivetWebResponse *) webResponseForException:(NSException *) exception
                                    duringWebRequest:(MulleCivetWebRequest *) request
 {
-   NSAutoreleasePool           *pool;
    NSString                    *string;
    NSMutableString             *tmp;
    MulleCivetWebTextResponse   *textResponse;
@@ -204,11 +201,7 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn,
 {
    MulleCivetWebServer      *server;
    MulleCivetWebRequest     *request;
-   NSAutoreleasePool        *pool;
    NSUInteger               rval;
-   NSData                   *utf8Data;
-   NSString                 *string;
-   NSMutableString          *tmp;
    struct mg_request_info   *info;
 
    info   = (void *) mg_get_request_info( conn);
@@ -232,6 +225,7 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn,
 {
    struct mg_request_info   *info;
 
+   // TODO: comment what the point of this is
    info = (void *) mg_get_request_info( conn);
 
    return( 0);
@@ -254,6 +248,7 @@ static int   mulle_mongoose_begin_request( struct mg_connection *conn)
 {
    struct mg_request_info   *info;
 
+   // TODO: comment what the point of this is
    info = (void *) mg_get_request_info( conn);
 }
 

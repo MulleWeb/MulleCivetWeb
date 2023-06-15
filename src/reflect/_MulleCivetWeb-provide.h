@@ -9,4 +9,11 @@
  *
  *      mulle-sde environment set MULLE_MATCH_TO_C_RUN DISABLE
  */
+#ifndef mulle_civet_web_provide_h__
+#define mulle_civet_web_provide_h__
+
+
 #include "civetweb.h"
+
+
+#endif

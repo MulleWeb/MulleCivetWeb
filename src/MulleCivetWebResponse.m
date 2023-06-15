@@ -148,7 +148,6 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
 - (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding
 {
-   NSData          *contentData;
    NSDate          *date;
    NSMutableData   *data;
    NSString        *key;
@@ -311,9 +310,7 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 
 - (void) addToTransferEncodings:(NSString *) s
 {
-   NSString         *value;
-   BOOL             contains;
-   NSMutableArray   *array;
+   NSString   *value;
 
    NSParameterAssert( ! [self hasSentHeader]);
 

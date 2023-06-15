@@ -10,7 +10,6 @@
 {
    NSMutableDictionary   *dictionary;
    NSString              *s;
-   NSString              *query;
    NSArray               *lineComponents;
    NSArray               *keyValueComponents;
    NSString              *key;
@@ -127,7 +126,6 @@ static NSCharacterSet  *getURLQueryAllowedWithoutAmpersandAndEqualCharacterSet( 
    NSString          *key;
    NSString          *value;
    NSString          *sep;
-   NSCharacterSet    *characterSet;
 
    s   = [NSMutableString object];
    sep = @"";

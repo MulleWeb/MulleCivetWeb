@@ -48,8 +48,6 @@
 
 - (id) initWithConnection:(void *) connection
 {
-   struct mg_request_info   *info;
-
    assert( connection);
    _connection = connection;
 

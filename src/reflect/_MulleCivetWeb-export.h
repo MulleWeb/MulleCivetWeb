@@ -9,6 +9,10 @@
  *
  *      mulle-sde environment set MULLE_MATCH_TO_C_RUN DISABLE
  */
+#ifndef mulle_civet_web_export_h__
+#define mulle_civet_web_export_h__
+
+
 #import "MulleCivetWebRequest+NSURL.h"
 #import "MulleCivetWebRequest.h"
 #import "MulleCivetWebResponse.h"
@@ -17,3 +21,6 @@
 #import "MulleObjCLoader+MulleCivetWeb.h"
 #import "NSURL+MulleCivetWeb.h"
 #import "NSURL+NSDictionary.h"
+
+
+#endif
