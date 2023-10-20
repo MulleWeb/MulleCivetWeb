@@ -114,10 +114,17 @@ mulle-sde install --prefix /usr/local \
 
 ### Manual Installation
 
-Install the [requirements](#Overview) and then install
-**MulleCivetWeb**
-with [cmake](https://cmake.org). Here `/usr/local` is chosen as the install
-prefix:
+Install the requirements:
+
+| Requirements                                 | Description
+|----------------------------------------------|-----------------------
+| [MulleObjCHTTPFoundation](https://github.com/MulleWeb/MulleObjCHTTPFoundation)             | 🎫 HTTP and HTML utility methods and classes for mulle-objc
+| [MulleFoundation](https://github.com/MulleFoundation/MulleFoundation)             | 💍 Umbrella library for the MulleFoundation
+| [mulle-objc-list](https://github.com/mulle-objc/mulle-objc-list)             | 📒 Lists mulle-objc runtime information contained in executables.
+
+Download the latest [tar](https://github.com/MulleWeb/MulleCivetWeb/archive/refs/tags/latest.tar.gz) or [zip](https://github.com/MulleWeb/MulleCivetWeb/archive/refs/tags/latest.zip) archive and unpack it.
+
+Install **MulleCivetWeb** into `/usr/local` with [cmake](https://cmake.org):
 
 ``` sh
 cmake -B build \
