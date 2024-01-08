@@ -9,8 +9,8 @@
  *
  *      mulle-sde environment set MULLE_MATCH_TO_C_RUN DISABLE
  */
-#ifndef mulle_civet_web_export_h__
-#define mulle_civet_web_export_h__
+#ifndef _mulle_civet_web__export_h__
+#define _mulle_civet_web__export_h__
 
 
 #import "MulleCivetWebRequest+NSURL.h"

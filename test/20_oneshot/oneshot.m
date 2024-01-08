@@ -3,6 +3,7 @@
 
 #include <MulleCivetWeb/civetweb.h>
 
+#include <unistd.h>
 
 
 @implementation MulleCivetWebResponse ( Test)
