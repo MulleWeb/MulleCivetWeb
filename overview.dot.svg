@@ -18,7 +18,7 @@
 <!-- civetweb -->
 <g id="node2" class="node">
 <title>civetweb</title>
-<g id="a_node2"><a xlink:href="https://github.com/mulle-nat/civetweb" xlink:title="civetweb">
+<g id="a_node2"><a xlink:href="https://github.com/MulleWeb/civetweb" xlink:title="civetweb">
 <polygon fill="lightgrey" stroke="black" points="346.5,-180 266.5,-180 266.5,-144 346.5,-144 346.5,-180"/>
 <text text-anchor="middle" x="306.5" y="-158.3" font-family="Times,serif" font-size="14.00">civetweb</text>
 </a>

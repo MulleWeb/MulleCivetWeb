@@ -517,6 +517,68 @@
 			]
 		]
 	},
+	"buffers":
+	[
+		{
+			"contents": "Searching 1371 files for \"sendChunkedContentData\" (case sensitive)\n\n/home/src/srcO/MulleWeb/MulleCivetWeb/src/MulleCivetWebResponse.h:\n   80  - (BOOL) sendContentData;\n   81  \n   82: // sendChunkedContentData will clear contentData, you can fill up again\n   83  // and call this again (be sure to add \"chunked\" to the TransferEncodings\n   84  // before sending the header\n   85: - (BOOL) sendChunkedContentData;\n   86  \n   87  - (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding;\n\n/home/src/srcO/MulleWeb/MulleCivetWeb/src/MulleCivetWebResponse.m:\n  255  \n  256  \n  257: - (BOOL) sendChunkedContentData\n  258  {\n  259     NSData       *data;\n\n/home/src/srcO/MulleWeb/MulleCivetWeb/test/50_chunked/chucky.m:\n   44                                               encoding:NSUTF8StringEncoding]];\n   45  \n   46:    [response sendChunkedContentData];\n   47  \n   48     headers = [request headers];\n   ..\n   56     [response appendLine:@\"---------------------\"];\n   57  \n   58:    [response sendChunkedContentData];\n   59  \n   60     // send a trailing nil ?\n   61:    [response sendChunkedContentData];\n   62  \n   63     return( nil);\n\n6 matches across 3 files\n",
+			"settings":
+			{
+				"buffer_size": 1168,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			},
+			"undo_stack":
+			[
+			]
+		},
+		{
+			"contents": "//\n//  MulleCivetWebResponse.h\n//  MulleCivetWeb\n//\n//  Created by Nat! on 02.02.20.\n//\n//  Copyright (c) 2020 Nat! - Mulle kybernetiK\n//  All rights reserved.\n//\n//  Redistribution and use in source and binary forms, with or without\n//  modification, are permitted provided that the following conditions are met:\n//\n//  Redistributions of source code must retain the above copyright notice, this\n//  list of conditions and the following disclaimer.\n//\n//  Redistributions in binary form must reproduce the above copyright notice,\n//  this list of conditions and the following disclaimer in the documentation\n//  and/or other materials provided with the distribution.\n//\n//  Neither the name of Mulle kybernetiK nor the names of its contributors\n//  may be used to endorse or promote products derived from this software\n//  without specific prior written permission.\n//\n//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\n//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE\n//  POSSIBILITY OF SUCH DAMAGE.\n//\n#import \"MulleCivetWebResponse.h\"\n\n#import \"MulleCivetWebRequest.h\"\n#import \"MulleCivetWebRequest+Private.h\"\n\n#import \"import-private.h\"\n\n#include \"civetweb.h\"\n\n\n#define RESPONSE_DEBUG\n\n\n@implementation MulleCivetWebResponse\n\n- (id) init\n{\n   abort();\n}\n\n\n- (instancetype) initWithHTTPVersion:(NSString *) s\n                          connection:(void *) v_connection\n{\n   struct mg_connection *connection = v_connection;\n\n   if( ! connection)\n   {\n      [self release];\n      return( nil);\n   }\n   _connection        = connection;\n\n   if( ! s)\n      s = @\"1.1\";\n\n   _httpVersion       = [s copy];\n   _headers           = [NSMutableDictionary new];\n   _orderedHeaderKeys = [NSMutableArray new];\n   _status            = 200;\n   _statusText        = @\"OK\";\n\n   return( self);\n}\n\n\n+ (instancetype) webResponseForWebRequest:(MulleCivetWebRequest *) request\n{\n   MulleCivetWebResponse   *response;\n\n   response = [[[self alloc] initWithHTTPVersion:[request HTTPVersion]\n                                      connection:[request connection]] autorelease];\n   return( response);\n}\n\n\n- (void) dealloc\n{\n   [_httpVersion release];\n   [_headers release];\n   [_orderedHeaderKeys release];\n\n   [super dealloc];\n}\n\n\n// struct mg_connection\n- (void *) connection\n{\n   return( _connection);\n}\n\n\n\n- (void) setHeaderValue:(NSString *) value\n                 forKey:(NSString *) key\n{\n   assert( ! [key hasSuffix:@\":\"]);\n\n   if( ! [_headers objectForKey:key])\n      [_orderedHeaderKeys addObject:key];\n   [_headers setObject:value\n                forKey:key];\n}\n\n\n- (NSString *) headerValueForKey:(NSString *) key\n{\n   return( [_headers objectForKey:key]);\n}\n\n\nstatic void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,\n                                                   NSString *key,\n                                                   NSString *value,\n                                                   NSStringEncoding encoding)\n{\n   [data appendData:[key dataUsingEncoding:encoding]];\n   [data appendBytes:\": \"\n              length:2];\n   [data appendData:[value dataUsingEncoding:encoding]];\n   [data appendBytes:\"\\r\\n\"\n              length:2];\n}\n\n\n- (void) clearContentData\n{\n   [_contentData autorelease];\n   _contentData = nil;\n}\n\n\n- (NSData *) headerDataUsingEncoding:(NSStringEncoding) encoding\n{\n   NSDate          *date;\n   NSMutableData   *data;\n   NSString        *key;\n   NSString        *s;\n   NSString        *value;\n   NSUInteger      contentLength;\n\n   data = [NSMutableData dataWithCapacity:2048];\n\n   assert( _status);\n   assert( _statusText);\n\n   s = [NSString stringWithFormat:@\"HTTP/%@ %lu %@\\r\\n\",\n         _httpVersion, (unsigned long) _status, _statusText];\n   [data appendData:[s dataUsingEncoding:encoding]];\n\n   // do some standard headers\n   key   = MulleHTTPDateKey;\n   value = [_headers objectForKey:key];\n   if( ! value)\n   {\n      date  = _date ? _date : [NSDate date];\n      value = [date mulleHTTPDescription];\n   }\n   [_orderedHeaderKeys removeObject:key];\n   appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);\n\n   key   = MulleHTTPContentTypeKey;\n   value = [_headers objectForKey:key];\n   if( ! value)\n      value = @\"text/plain; charset=utf-8\";\n   [_orderedHeaderKeys removeObject:key];\n   appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);\n\n\n   for( key in _orderedHeaderKeys)\n   {\n      value = [_headers objectForKey:key];\n      appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);\n   }\n\n   /*\n    * if you send the header before contentData is filled up,\n    * sending ContentLength is a problem\n    */\n   if( ! [self containsTransferEncoding:MulleHTTPTransferEncodingChunked])\n   {\n      // this will create contentData possibly dynamically\n      contentLength = [[self contentData] length];\n\n      key   = MulleHTTPContentLengthKey;\n      value = [_headers objectForKey:key];\n      if( ! value)\n         value = [NSString stringWithFormat:@\"%lu\", (unsigned long) contentLength];\n      [_orderedHeaderKeys removeObject:key];\n      appendHTTPHeaderToDataUsingEncoding( data, key, value, encoding);\n   }\n\n   [data appendBytes:\"\\r\\n\"\n              length:2];\n\n   return( data);\n}\n\n\n- (BOOL) sendHeaderData\n{\n   NSData       *data;\n   NSUInteger   length;\n   int          rval;\n\n   NSParameterAssert( ! [self hasSentHeader]);\n\n   data   = [self headerDataUsingEncoding:NSUTF8StringEncoding];\n   length = [data length];\n\n#ifdef RESPONSE_DEBUG\n   fprintf( stderr, \"~~~ %s: %ld bytes\\n\", __PRETTY_FUNCTION__, length);\n#endif\n   rval = mg_write( _connection, [data bytes], length);\n\n   if( rval == -1)\n      return( NO);\n\n   _hasSentHeader = YES;\n   return( YES);\n}\n\n\n- (BOOL) sendChunkedContentBytes:(void *) bytes\n                          length:(NSUInteger) length\n{\n   int   rval;\n\n   NSParameterAssert( [self hasSentHeader]);\n\n#ifdef RESPONSE_DEBUG\n   fprintf( stderr, \"~~~ %s: %ld bytes\\n\", __PRETTY_FUNCTION__, length);\n#endif\n\n   // also be able to send empty data\n   rval  = mg_send_chunk( _connection, bytes, length);\n   return( rval == -1 ? NO : YES);\n}\n\n\n- (BOOL) sendChunkedContentData\n{\n   NSData       *data;\n   void         *bytes;\n   NSUInteger   length;\n   BOOL         success;\n\n   data   = [self contentData];\n   bytes  = [data bytes];\n   length = [data length];\n\n   success = [self sendChunkedContentBytes:bytes\n                                    length:length];\n   // must do this even if length is 0\n   // clear on failure also ???? probably not\n   if( success)\n      [self clearContentData];\n\n   return( success);\n}\n\n\n- (BOOL) sendContentData\n{\n   NSData       *data;\n   void         *bytes;\n   NSUInteger   length;\n   int          rval;\n\n   NSParameterAssert( [self hasSentHeader]);\n\n   data   = [self contentData];\n   length = [data length];\n\n#ifdef RESPONSE_DEBUG\n   fprintf( stderr, \"~~~ %s: %ld bytes\\n\", __PRETTY_FUNCTION__, length);\n#endif\n   if( ! length)\n      return( YES);\n\n   bytes = [data bytes];\n   rval  = mg_write( _connection, bytes, length);\n\n   return( rval == -1 ? NO : YES);\n}\n\n\n// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding\n// Transfer-Encoding: chunked\n// Transfer-Encoding: compress\n// Transfer-Encoding: deflate\n// Transfer-Encoding: gzip\n// Transfer-Encoding: identity\n\n- (void) addToTransferEncodings:(NSString *) s\n{\n   NSString   *value;\n\n   NSParameterAssert( ! [self hasSentHeader]);\n\n   value = [_headers objectForKey:MulleHTTPTransferEncodingKey];\n   if( ! value)\n      value = s;\n   else\n      value = [value mulleStringByAddingListComponent:s\n                                            separator:@\",\"]; // check for dupe\n   [self setHeaderValue:value\n                 forKey:MulleHTTPTransferEncodingKey];\n}\n\n\n- (BOOL) containsTransferEncoding:(NSString *) s\n{\n   NSString   *value;\n   NSRange    range;\n\n   value = [_headers objectForKey:MulleHTTPTransferEncodingKey];\n   range = [value mulleRangeOfListComponent:s\n                                  separator:@\",\"];\n   return( range.length != 0);\n}\n\n\n# pragma mark - MulleObjCStream protocol\n\n- (MulleObjCBufferedOutputStream *) createStream\n{\n   MulleObjCBufferedOutputStream   *stream;\n\n   NSParameterAssert( ! [self hasCreatedStream]);\n\n   // https://stackoverflow.com/questions/1098897/what-is-the-largest-safe-udp-packet-size-on-the-internet?noredirect=1\n   // astara/maupin. 1200 looks OK as we would like to emit a\n   // pretty full packet as early as possible here\n   stream = [[[MulleObjCBufferedOutputStream alloc] initWithOutputStream:self\n                                                              bufferSize:1200] autorelease];\n   _hasCreatedStream = YES;\n   return( stream);\n}\n\n\n- (MulleObjCBufferedOutputStream *) createStreamAndSendHeaderData\n{\n   [self addToTransferEncodings:MulleHTTPTransferEncodingChunked];\n   if( ! [self sendHeaderData])\n      return( nil);\n   return( [self createStream]);\n}\n\n\n- (void) mulleWriteBytes:(void *) bytes\n                  length:(NSUInteger) length\n{\n   if( ! [self sendChunkedContentBytes:bytes\n                                length:length])\n   {\n      [NSException raise:NSInternalInconsistencyException\n                  format:@\"remote client shut down ?\"];\n   }\n}\n\n@end\n",
+			"file": "src/MulleCivetWebResponse.m",
+			"file_size": 9825,
+			"file_write_time": 133383010236825923,
+			"settings":
+			{
+				"buffer_size": 9826,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					13,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAGgbAAAAAAAAaRsAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAaBsAAAAAAABoGwAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		},
+		{
+			"file": "src/civetweb/include/civetweb.h",
+			"settings":
+			{
+				"buffer_size": 68374,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+			]
+		},
+		{
+			"file": "src/civetweb/src/civetweb.c",
+			"settings":
+			{
+				"buffer_size": 627672,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+			]
+		}
+	],
 	"build_system": "",
 	"build_system_choices":
 	[
@@ -565,6 +627,9 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+	],
 	"file_history":
 	[
 		"/Volumes/Source/srcO/mulle-objc/mulle-objc-runtime/test-compiler/0_compiler/metaabi/metaabi-struct-rval.m",
@@ -714,6 +779,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"sendChunkedContentData",
 			"arguments:(va_list) args",
 			"sendChunkedHeaderData",
 			"MulleObjCInstanceGetAllocator",
@@ -779,14 +845,181 @@
 			""
 		],
 		"reverse": false,
+		"scrollbar_highlights": true,
 		"show_context": true,
 		"use_buffer2": true,
+		"use_gitignore": true,
 		"whole_word": false,
 		"wrap": true
 	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1168,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										186,
+										208
+									],
+									[
+										388,
+										410
+									],
+									[
+										593,
+										615
+									],
+									[
+										833,
+										855
+									],
+									[
+										997,
+										1019
+									],
+									[
+										1085,
+										1107
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								602,
+								602
+							]
+						],
+						"settings":
+						{
+							"default_dir": "/home/src/srcO/MulleWeb/MulleWebServer/test/20_webhandler",
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/MulleCivetWebResponse.m",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9826,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6633,
+								6646
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 7214.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/civetweb/include/civetweb.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 68374,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								38689,
+								38689
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 30134.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/civetweb/src/civetweb.c",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 627672,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								267451,
+								267451
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 309164.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
 	"incremental_find":
 	{
-		"height": 38.0
+		"height": 39.0
 	},
 	"input":
 	{
@@ -828,9 +1061,10 @@
 		"height": 0.0
 	},
 	"pinned_build_system": "",
+	"project": "MulleCivetWeb.sublime-project",
 	"replace":
 	{
-		"height": 70.0
+		"height": 74.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -964,6 +1198,7 @@
 		],
 		"width": 584.0
 	},
+	"selected_group": 0,
 	"settings":
 	{
 	},

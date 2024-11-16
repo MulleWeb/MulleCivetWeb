@@ -105,6 +105,19 @@
 }
 
 
+- (void) mulleGainAccess
+{
+   [super mulleGainAccess];
+   [_requestHandler mulleGainAccess];
+}
+
+
+- (void) mulleRelinquishAccess
+{
+   [_requestHandler mulleRelinquishAccess];
+   [super mulleRelinquishAccess];
+}
+
 
 #pragma mark -
 #pragma mark ObjC Interfacing
@@ -204,7 +217,10 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn,
    NSUInteger               rval;
    struct mg_request_info   *info;
 
+   // TODO: comment what the point of this is
    info   = (void *) mg_get_request_info( conn);
+   MULLE_C_UNUSED( info);
+
    server = p_server;
 
    // need to use an @autoreleasepool here, since
@@ -225,10 +241,10 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn,
 {
    struct mg_request_info   *info;
 
-   // TODO: comment what the point of this is
+   // TODO: comment what's the point of this is ?
    info = (void *) mg_get_request_info( conn);
-
-   return( 0);
+   MULLE_C_UNUSED( info);
+   return( 0); 
 }
 
 
@@ -250,6 +266,7 @@ static int   mulle_mongoose_begin_request( struct mg_connection *conn)
 
    // TODO: comment what the point of this is
    info = (void *) mg_get_request_info( conn);
+   MULLE_C_UNUSED( info);
 }
 
 

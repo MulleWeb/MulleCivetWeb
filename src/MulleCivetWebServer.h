@@ -70,7 +70,7 @@
    char   _isReady;
 }
 
-@property( assign) id <MulleCivetWebRequestHandler>   requestHandler;
+@property( assign) id <NSObject, MulleCivetWebRequestHandler>   requestHandler;
 
 // options passed through to mg_start options
 - (instancetype) initWithCStringOptions:(char **) options;
