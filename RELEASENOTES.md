@@ -1,3 +1,8 @@
+### 0.17.11
+
+
+* add TAO support
+
 ### 0.17.10
 
 * Various small improvements
