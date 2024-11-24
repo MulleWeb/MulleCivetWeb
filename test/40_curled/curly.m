@@ -7,7 +7,9 @@
 #include <unistd.h>
 
 
-@interface MyWebRequestHandler : NSObject <MulleCivetWebRequestHandler>
+@interface MyWebRequestHandler : MulleObject <MulleCivetWebRequestHandler,
+                                              MulleAutolockingObjectProtocols,
+                                              MulleCurlParser>
 @end
 
 

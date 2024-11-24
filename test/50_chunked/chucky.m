@@ -7,7 +7,9 @@
 #include <unistd.h>
 
 
-@interface MyWebRequestHandler : NSObject <MulleCivetWebRequestHandler, MulleCurlParser>
+@interface MyWebRequestHandler : MulleObject <MulleCivetWebRequestHandler,
+                                              MulleAutolockingObjectProtocols,
+                                              MulleCurlParser>
 @end
 
 
@@ -187,7 +189,7 @@ int   main( int argc, char *argv[])
       // need to wait for the server to be ready though...
       //
       fprintf( stderr, "starting curl...\n");
-      [thread mulleStartUndetached];
+      [thread mulleStart];
       fprintf( stderr, "waiting for curl to finish...\n");
       [thread mulleJoin];
       fprintf( stderr, "done\n");

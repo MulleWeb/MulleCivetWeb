@@ -63,7 +63,7 @@
 // you must mullePerformFinalize the server, so that the threads release
 // the universe
 //
-@interface MulleCivetWebServer : NSObject
+@interface MulleCivetWebServer : MulleObject < MulleAutolockingObjectProtocols>
 {
    void   *_ctx;
    char   _server_name[ 256];
