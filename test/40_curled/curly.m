@@ -7,6 +7,21 @@
 #include <unistd.h>
 
 
+// Sublime Text broadcasts changes to files via :8080 so you may get
+// some stray requests, if you use that port :)
+
+static NSString   *URL = @"http://localhost:51293/foo";
+
+static char  *options[] =
+{
+   "num_threads", "1",
+   "listening_ports", "51293", // random ...
+   NULL, NULL
+};
+
+
+
+
 @interface MyWebRequestHandler : MulleObject <MulleCivetWebRequestHandler,
                                               MulleAutolockingObjectProtocols,
                                               MulleCurlParser>
@@ -23,6 +38,8 @@
    NSString                    *key;
    NSDictionary                *headers;
    NSData                      *contentData;
+
+   mulle_fprintf( stderr, "composing response for request...\n");
 
    url         = [request URL];
    contentData = [request contentData];
@@ -53,21 +70,31 @@
    return( response);
 }
 
+@end
 
-- (void) request:(id) server
+
+@interface MyWebRequestser : MulleObject <MulleCivetWebRequestHandler,
+                                              MulleAutolockingObjectProtocols,
+                                              MulleCurlParser>
+@end
+
+
+static int    sendRequest( NSThread *thread, id server)
 {
-   MulleCurl        *curl;
-   NSDictionary     *headers;
-   NSData           *data;
-   NSData           *postData;
-   NSString         *encoded;
-   NSCharacterSet   *characterSet;
+   MulleCurl             *curl;
+   NSDictionary          *headers;
+   NSData                *data;
+   NSData                *postData;
+   NSString              *encoded;
+   NSCharacterSet        *characterSet;
 
    while( server && ! [server isReady])
    {
-      fprintf( stderr, "waiting for server to become ready...");
+      mulle_fprintf( stderr, "waiting for server to become ready...");
       sleep( 1);
    }
+
+   mulle_fprintf( stderr, "sending request via curl...\n");
 
    [MulleCurl setDefaultUserAgent:@"test"];
    curl = [MulleCurl object];
@@ -85,21 +112,15 @@
    postData     = [NSData dataWithBytes:[encoded UTF8String]
                                  length:[encoded mulleUTF8StringLength]];
 
-   data = [curl dataWithContentsOfURLWithString:@"http://localhost:8080/foo"
+   data = [curl dataWithContentsOfURLWithString:URL
                                   byPostingData:postData]; // @"https://www.mulle-kybernetik.com/robots.txt"];
    if( ! data)
-      printf( "no data\n");
-   printf( "%.*s\n", (int) [data length], [data bytes]);
+      mulle_fprintf( stderr, "no data\n");
+   mulle_printf( "%.*s\n", (int) [data length], [data bytes]);
+
+   MulleObjCDumpAutoreleasePoolsToFile( "pooldump-1.csv");
+   return( 0);
 }
-
-@end
-
-
-static char  *options[] =
-{
-   "num_threads", "1",
-   NULL, NULL
-};
 
 
 int   main( int argc, char *argv[])
@@ -128,7 +149,7 @@ int   main( int argc, char *argv[])
 
       if( mode == 's')
       {
-         fprintf( stderr, "CTRL-C to exit\n");
+         mulle_fprintf( stderr, "CTRL-C to exit\n");
          for(;;)
          {
             sleep( 100);
@@ -137,35 +158,33 @@ int   main( int argc, char *argv[])
    }
 
    //
-   // chance to try with curl from the outside
-   // interestingly, Sublime Text broadcasts changes to files via :8080
-   // so you may get some stray requests :)
+   // chance to try with curl from the outside interestingly
    //
 
    if( mode == 'c' || mode == 'b')
    {
-      //
-      // "abuse" handler to also send the request via curl and http
-      // to server ...
-      //
-      thread = [[[NSThread alloc] initWithTarget:handler
-                                        selector:@selector( request:)
-                                          object:server] autorelease];
+
+      thread = [[[NSThread alloc] mulleInitWithObjectFunction:sendRequest
+                                                      object:server] autorelease];
       //
       // need to wait for the server to be ready though...
       //
-      fprintf( stderr, "starting curl...\n");
+      mulle_fprintf( stderr, "starting curl...\n");
       [thread mulleStart];
-      fprintf( stderr, "waiting for curl to finish...\n");
+      mulle_fprintf( stderr, "waiting for curl to finish...\n");
       [thread mulleJoin];
-      fprintf( stderr, "done\n");
+      mulle_fprintf( stderr, "done\n");
 
       // if we use the pedantic exit, then the server will have worker threads
       // still going. These will have retained the universe, so we will wait
       // indefinetely
    }
 
+   MulleObjCDumpAutoreleasePoolsToFile( "pooldump-2.csv");
+
    [server mullePerformFinalize];
+
+   MulleObjCDumpAutoreleasePoolsToFile( "pooldump-3.csv");
 
    return( 0);
 }

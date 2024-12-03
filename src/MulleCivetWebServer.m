@@ -340,43 +340,44 @@ static int   log_message( const struct mg_connection *conn, const char *message)
    NSMutableArray          *array;
    NSNumber                *no;
    NSNumber                *yes;
+   struct mg_server_port   *p;
    struct mg_server_port   *ports;
    struct mg_server_port   *sentinel;
+   int                     max;
 
    if( ! _ctx)
       return( nil);
 
-   n = mg_get_server_ports( _ctx, 0, NULL);
-   if( n < 0)
-      return( nil);
+   // stupid code
+   for( n = max = 16; n == max; max *= 2)
+   {
+      ports = MulleObjCCallocAutoreleased( max, sizeof( struct mg_server_port));
 
-   if( ! n)
-      return( [NSArray array]);
+      n = mg_get_server_ports( _ctx, max, ports);
+      if( n == -1)
+         return( nil);
+   }
 
-   ports = MulleObjCCallocAutoreleased( n, sizeof( struct mg_server_port));
-   n     = mg_get_server_ports( _ctx, n, ports);
-   if( n < 0)
-      return( nil);
+   yes      = @(YES);
+   no       = @(NO);
 
-   yes   = @(YES);
-   no    = @(NO);
-
-   array = [NSMutableArray arrayWithCapacity:n];
-   sentinel = &ports[ n];
-   while( ports < sentinel)
+   array    = [NSMutableArray arrayWithCapacity:n];
+   p        = ports;
+   sentinel = &p[ n];
+   while( p < sentinel)
    {
       info = @{
-               @"isSSL":      ports->is_ssl ? yes : no,
-               @"isRedirect": ports->is_redirect ? yes : no,
-               @"protocol":   ports->protocol == 3
+               @"isSSL":      p->is_ssl ? yes : no,
+               @"isRedirect": p->is_redirect ? yes : no,
+               @"protocol":   p->protocol == 3
                                  ? @"IPV6"
-                                 : (ports->protocol == 2)
+                                 : (p->protocol == 2)
                                     ? @"???"
                                     : @"IPv4",
-               @"port":      @(ports->port)
+               @"port":      @(p->port)
                };
       [array addObject:info];
-      ++ports;
+      ++p;
    }
 
    return( array);

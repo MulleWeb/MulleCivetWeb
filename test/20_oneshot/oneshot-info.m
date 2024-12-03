@@ -6,6 +6,16 @@
 #include <unistd.h>
 
 
+static char  *options[] =
+{
+   "num_threads", "1",
+   "listening_ports", "51295", // random ...
+   NULL, NULL
+};
+
+
+
+
 @implementation MulleCivetWebResponse ( Test)
 
 - (void) sendHeaderData
@@ -85,13 +95,6 @@
 }
 
 @end
-
-
-static char  *options[] =
-{
-   "num_threads", "1",
-   NULL, NULL
-};
 
 
 int   main( int argc, char *argv[])
