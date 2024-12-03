@@ -11,6 +11,16 @@
 #endif
 
 
+
+
+static char  *options[] =
+{
+   "num_threads", "1",
+   "listening_ports", "51294", // random ...
+   NULL, NULL
+};
+
+
 //
 // noleak checks for alloc/dealloc/finalize
 // and also load/unload initialize/deinitialize
@@ -24,7 +34,7 @@ static void   test_noleak( void)
    {
       @try
       {
-         obj = [[MulleCivetWebServer new] autorelease];
+         obj = [[[MulleCivetWebServer alloc] initWithCStringOptions:options] autorelease];
          if( ! obj)
          {
             fprintf( stderr, "failed to allocate\n");
