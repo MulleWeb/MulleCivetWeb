@@ -32,6 +32,7 @@ static char  *options[] =
 
 - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
              webResponseForWebRequest:(MulleCivetWebRequest *) request
+                                          MULLE_OBJC_THREADSAFE_METHOD
 {
    MulleCivetWebTextResponse   *response;
    NSURL                       *url;

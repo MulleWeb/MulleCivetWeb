@@ -125,6 +125,7 @@
 
 - (MulleCivetWebResponse *) webResponseForException:(NSException *) exception
                                    duringWebRequest:(MulleCivetWebRequest *) request
+                                   MULLE_OBJC_THREADSAFE_METHOD
 {
    NSString                    *string;
    NSMutableString             *tmp;
@@ -147,6 +148,7 @@
 - (MulleCivetWebResponse *) webResponseForError:(NSUInteger) code
                                errorDescription:(NSString *) errorDescription
                                   forWebRequest:(MulleCivetWebRequest *) request
+                                   MULLE_OBJC_THREADSAFE_METHOD
 {
    MulleCivetWebTextResponse   *textResponse;
 
@@ -158,6 +160,7 @@
 
 
 - (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request
+                                   MULLE_OBJC_THREADSAFE_METHOD
 {
    return( [self webResponseForError:404
                     errorDescription:@"Nothing here"
@@ -165,6 +168,12 @@
 }
 
 
+//
+// this is running in a thread, that mongoose/civetweb started
+// The request is therefore affine to that thread. The MulleCivetWebRequest
+// does not need to be threadsafe, its intended to be consumed in this
+// thread
+//
 - (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request
 {
    MulleCivetWebResponse   *response;
@@ -238,6 +247,7 @@ static int   mulle_mongoose_handle_request( struct mg_connection *conn,
 
 
 - (int) beginRequestWithConnection:(struct mg_connection *) conn
+                                             MULLE_OBJC_THREADSAFE_METHOD
 {
    struct mg_request_info   *info;
 
@@ -260,7 +270,8 @@ static int   mulle_mongoose_begin_request( struct mg_connection *conn)
 
 
 - (void) endRequestWithConnection:(struct mg_connection *) conn
-                            code:(int) code
+                             code:(int) code
+                                         MULLE_OBJC_THREADSAFE_METHOD
 {
    struct mg_request_info   *info;
 
@@ -281,7 +292,8 @@ static void   mulle_mongoose_end_request( struct mg_connection *conn,
 }
 
 
-- (volatile BOOL) isReady
+- (volatile BOOL) isReady MULLE_OBJC_THREADSAFE_METHOD
+
 {
    return( _isReady);
 }
@@ -404,7 +416,7 @@ static int   log_message( const struct mg_connection *conn, const char *message)
 
 
 // will be overridden later, just used by tests
-- (void) log:(NSString *) format, ...
+- (void) log:(NSString *) format, ...   MULLE_OBJC_THREADSAFE_METHOD
 {
    mulle_vararg_list  args;
 
@@ -412,7 +424,6 @@ static int   log_message( const struct mg_connection *conn, const char *message)
    mulle_mvfprintf( stderr, [format UTF8String], args);
    mulle_vararg_end( args);
 }
-
 
 @end
 

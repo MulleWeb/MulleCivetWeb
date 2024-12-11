@@ -6,10 +6,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+static NSString   *URL = @"http://localhost:47257/foo";
 
-@interface MyWebRequestHandler : MulleObject <MulleCivetWebRequestHandler,
-                                              MulleAutolockingObjectProtocols,
-                                              MulleCurlParser>
+
+static char  *options[] =
+{
+   "num_threads", "1",
+   "listening_ports", "47257", // random ...
+   NULL, NULL
+};
+
+
+
+@interface MyWebRequestHandler : MulleObject <MulleCivetWebRequestHandler>
+
 @end
 
 
@@ -17,6 +27,7 @@
 
 - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
              webResponseForWebRequest:(MulleCivetWebRequest *) request
+                                          MULLE_OBJC_THREADSAFE_METHOD
 {
    MulleCivetWebTextResponse   *response;
    NSURL                       *url;
@@ -67,6 +78,17 @@
 
 
 
+@end
+
+
+@interface MyWebRequester : NSObject <MulleAutolockingObjectProtocols,
+                                      MulleCurlParser>
+@end
+
+
+@implementation MyWebRequester
+
+
 - (BOOL) curl:(MulleCurl *) curl
    parseBytes:(void *) bytes
        length:(NSUInteger) length
@@ -80,8 +102,6 @@
 {
    return( nil);
 }
-
-
 
 - (void) request:(id) server
 {
@@ -116,7 +136,7 @@
                                  length:[encoded mulleUTF8StringLength]];
 
    [curl setParser:self];
-   [curl parseContentsOfURLWithString:@"http://localhost:8080/foo"
+   [curl parseContentsOfURLWithString:URL
                         byPostingData:postData];
 //  data = [curl dataWithContentsOfURLWithString:@"http://localhost:8080/foo"
 //                                 byPostingData:postData]; // @"https://www.mulle-kybernetik.com/robots.txt"];
@@ -125,20 +145,14 @@
 //  printf( "%.*s\n", (int) [data length], [data bytes]);
 }
 
-
 @end
 
-
-static char  *options[] =
-{
-   "num_threads", "1",
-   NULL, NULL
-};
 
 
 int   main( int argc, char *argv[])
 {
    MyWebRequestHandler      *handler;
+   MyWebRequester           *requester;
    MulleCivetWebServer      *server;
    MulleCivetWebRequest     *request;
    NSData                   *contentData;
@@ -178,13 +192,10 @@ int   main( int argc, char *argv[])
 
    if( mode == 'c' || mode == 'b')
    {
-      //
-      // "abuse" handler to also send the request via curl and http
-      // to server ...
-      //
-      thread = [[[NSThread alloc] initWithTarget:handler
-                                        selector:@selector( request:)
-                                          object:server] autorelease];
+      requester = [MyWebRequester object];
+      thread    = [[[NSThread alloc] initWithTarget:requester
+                                           selector:@selector( request:)
+                                             object:server] autorelease];
       //
       // need to wait for the server to be ready though...
       //

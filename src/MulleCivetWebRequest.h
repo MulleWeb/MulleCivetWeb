@@ -40,7 +40,7 @@
 //
 // the webrequest should not be retained or copied, it just lives during
 // the lifetime of the request/response cycle. It will be created by the
-// MulleCivetWebServer so don't create one.
+// MulleCivetWebServer so don't create one yourself.
 //
 @interface MulleCivetWebRequest : NSObject
 {

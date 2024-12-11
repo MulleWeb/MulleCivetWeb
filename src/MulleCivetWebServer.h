@@ -47,12 +47,14 @@
 // maybe too much web here ? :)
 
  - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
-              webResponseForWebRequest:(MulleCivetWebRequest *) request;
+              webResponseForWebRequest:(MulleCivetWebRequest *) request
+                                             MULLE_OBJC_THREADSAFE_METHOD;
 
  @optional
  - (MulleCivetWebResponse *) webServer:(MulleCivetWebServer *) server
                webResponseForException:(NSException *) exception
-                      duringWebRequest:(MulleCivetWebRequest *) request;
+                      duringWebRequest:(MulleCivetWebRequest *) request
+                                             MULLE_OBJC_THREADSAFE_METHOD;
 
 @end
 
@@ -61,28 +63,32 @@
 // to the requestHandler which should fill in the response.
 // The server runs as soon as you init it. If you use MULLE_OBJC_PEDANTIC_EXIT
 // you must mullePerformFinalize the server, so that the threads release
-// the universe
+// the universe.
+// We can't make this autolocking, as multiple threads from mongoose/civetweb
+// would block each other, somewhat defeating the purpose.
 //
-@interface MulleCivetWebServer : MulleObject < MulleAutolockingObjectProtocols>
+@interface MulleCivetWebServer : MulleObject
 {
    void   *_ctx;
    char   _server_name[ 256];
    char   _isReady;
 }
 
+// TODO: implement shareRecursiveLock with requestHandler and require it to
+//       be a MulleObject ?
 @property( assign) id <NSObject, MulleCivetWebRequestHandler>   requestHandler;
 
 // options passed through to mg_start options
 - (instancetype) initWithCStringOptions:(char **) options;
 
 // if the server is listening
-- (BOOL) isReady;
+- (volatile BOOL) isReady  MULLE_OBJC_THREADSAFE_METHOD;
 
 // you can override this, or plop in a requestHandler
-- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request;
+- (MulleCivetWebResponse *) webResponseForWebRequest:(MulleCivetWebRequest *) request MULLE_OBJC_THREADSAFE_METHOD;
 
 // for more control, override this
-- (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request;
+- (NSUInteger) handleWebRequest:(MulleCivetWebRequest *) request  MULLE_OBJC_THREADSAFE_METHOD;
 
 // gives you an array of dictionaries, or nil if the information
 // can't be obtained
@@ -94,14 +100,15 @@
 // the way to create http errors like 404 or so
 - (MulleCivetWebResponse *) webResponseForError:(NSUInteger) code
                                errorDescription:(NSString *) errorDescription
-                                  forWebRequest:(MulleCivetWebRequest *) request;
+                                  forWebRequest:(MulleCivetWebRequest *) request
+                                  MULLE_OBJC_THREADSAFE_METHOD;
 @end
 
 
 
 @interface MulleCivetWebServer(Future)
 
-- (void) log:(NSString *) format, ...;
+- (void) log:(NSString *) format, ...     MULLE_OBJC_THREADSAFE_METHOD;
 
 @end
 
