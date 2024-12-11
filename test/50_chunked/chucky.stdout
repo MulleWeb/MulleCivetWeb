@@ -1,13 +1,13 @@
 Reply
 ---------------------
-URL: https://localhost:8080/foo
+URL: https://localhost:47257/foo
 Content: VfL%20Bochum%201848
 
 Header Accept: */*
 Header Accept-Encoding: chunked
 Header Content-Type: application/x-www-form-urlencoded
 Header Content-Length: 19
-Header Host: localhost:8080
+Header Host: localhost:47257
 Header User-Agent: test
 ---------------------
 
