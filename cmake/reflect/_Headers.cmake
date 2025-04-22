@@ -11,10 +11,10 @@ endif()
 # contents are derived from the file locations
 
 set( INCLUDE_DIRS
+src/reflect
+src/generic
 src
 src/civetweb/include
-src/generic
-src/reflect
 )
 
 #

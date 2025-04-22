@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.15)
 
-project( MulleCivetWeb VERSION 0.17.13 LANGUAGES C)
+project( MulleCivetWeb VERSION 0.17.14 LANGUAGES C)
 
 
 
