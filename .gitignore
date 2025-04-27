@@ -1,4 +1,5 @@
 *.dSYM
+src/civetweb
 src/civetweb/
 civetweb/
 
@@ -48,3 +49,5 @@ cola/wilted/
 *-build-*/
 .idea/
 *.bak
+.mulle/etc/make/build-dir
+vgcore.*
