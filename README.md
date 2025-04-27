@@ -8,9 +8,9 @@ MulleCivetWeb is a "WebServer as a library". It is based on
 
 
 
-| Release Version                                       | Release Notes
-|-------------------------------------------------------|--------------
-| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/MulleWeb/MulleCivetWeb.svg) [![Build Status](https://github.com/MulleWeb/MulleCivetWeb/workflows/CI/badge.svg)](//github.com/MulleWeb/MulleCivetWeb/actions) | [RELEASENOTES](RELEASENOTES.md) |
+| Release Version                                       | Release Notes  | AI Documentation
+|-------------------------------------------------------|----------------|---------------
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/MulleWeb/MulleCivetWeb.svg) [![Build Status](https://github.com/MulleWeb/MulleCivetWeb/workflows/CI/badge.svg)](//github.com/MulleWeb/MulleCivetWeb/actions) | [RELEASENOTES](RELEASENOTES.md) | [DeepWiki for MulleCivetWeb](https://deepwiki.com/MulleWeb/MulleCivetWeb)
 
 
 
