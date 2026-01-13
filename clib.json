@@ -1,6 +1,6 @@
 {
    "name" : "MulleCivetWeb",
-   "version" : "0.17.10",
+   "version" : "0.17.15",
    "description" : "🦊 HTTP Server for mulle-objc",
    "keywords" : [],
    "license" : "BSD-3-Clause",
@@ -40,7 +40,7 @@
       "src/reflect/_MulleCivetWeb-versioncheck.h"
    ],
    "dependencies" : {
-      "mulle-nat/civetweb": "*",
+      "MulleWeb/civetweb": "*",
       "MulleWeb/MulleObjCHTTPFoundation": "*",
       "MulleFoundation/MulleFoundation": "*",
       "mulle-objc/mulle-objc-list": "*"
