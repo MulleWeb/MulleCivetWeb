@@ -56,3 +56,6 @@ test*/**/*.test.*
 !/AGENTS.md
 !/README.md
 build-*/
+test/40_curled/pooldump-1.csv
+test/40_curled/pooldump-2.csv
+test/40_curled/pooldump-3.csv
