@@ -67,7 +67,7 @@ src/MulleCivetWebResponse.h
 src/MulleCivetWebServer.h
 src/MulleCivetWebTextResponse.h
 src/MulleCivetWeb.h
-src/MulleObjCLoader+MulleCivetWeb.h
+src/MulleObjCDeps+MulleCivetWeb.h
 src/NSURL+MulleCivetWeb.h
 src/NSURL+NSDictionary.h
 src/civetweb/include/civetweb.h

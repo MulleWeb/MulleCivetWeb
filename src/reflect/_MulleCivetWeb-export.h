@@ -18,7 +18,7 @@
 #import "MulleCivetWebResponse.h"
 #import "MulleCivetWebServer.h"
 #import "MulleCivetWebTextResponse.h"
-#import "MulleObjCLoader+MulleCivetWeb.h"
+#import "MulleObjCDeps+MulleCivetWeb.h"
 #import "NSURL+MulleCivetWeb.h"
 #import "NSURL+NSDictionary.h"
 
