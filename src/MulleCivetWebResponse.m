@@ -225,7 +225,7 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    length = [data length];
 
 #ifdef RESPONSE_DEBUG
-   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+   fprintf( stderr, "~~~ %s: %tu bytes\n", __PRETTY_FUNCTION__, length);
 #endif
    rval = mg_write( _connection, [data bytes], length);
 
@@ -245,7 +245,7 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    NSParameterAssert( [self hasSentHeader]);
 
 #ifdef RESPONSE_DEBUG
-   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+   fprintf( stderr, "~~~ %s: %tu bytes\n", __PRETTY_FUNCTION__, length);
 #endif
 
    // also be able to send empty data
@@ -289,7 +289,7 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    length = [data length];
 
 #ifdef RESPONSE_DEBUG
-   fprintf( stderr, "~~~ %s: %ld bytes\n", __PRETTY_FUNCTION__, length);
+   fprintf( stderr, "~~~ %s: %tu bytes\n", __PRETTY_FUNCTION__, length);
 #endif
    if( ! length)
       return( YES);

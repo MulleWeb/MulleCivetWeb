@@ -275,6 +275,7 @@ static int   mulle_mongoose_begin_request( struct mg_connection *conn)
 {
    struct mg_request_info   *info;
 
+   MULLE_C_UNUSED( code);
    // TODO: comment what the point of this is
    info = (void *) mg_get_request_info( conn);
    MULLE_C_UNUSED( info);
@@ -302,8 +303,12 @@ static void   mulle_mongoose_end_request( struct mg_connection *conn,
 static void  *
    mulle_mongoose_did_init_thread( const struct mg_context *ctx, int thread_type )
 {
-   MulleCivetWebServer   *server;
-   void                  *pool;
+   MulleCivetWebServer         *server;
+   struct _mulle_objc_universe *universe;
+   void                        *pool;
+
+   universe = mulle_objc_global_get_universe_inline( __MULLE_OBJC_UNIVERSEID__);
+   _MulleThreadCreateThreadObjectInUniverse( universe);
 
    if( thread_type == 0)
    {
@@ -312,7 +317,7 @@ static void  *
    }
 
    pool = MulleAutoreleasePoolPush();
-   return( pool);  // could store something in TLS here
+   return( pool);
 }
 
 
@@ -321,9 +326,14 @@ static void
                                    int thread_type,
                                    void *pool)
 {
-   MulleCivetWebServer   *server;
+   MulleCivetWebServer         *server;
+   struct _mulle_objc_universe *universe;
 
    MulleAutoreleasePoolPop( pool);
+
+   universe = mulle_objc_global_get_universe_inline( __MULLE_OBJC_UNIVERSEID__);
+   _MulleThreadRemoveThreadObjectFromUniverse( [NSThread currentThread], universe);
+
    if( thread_type == 0)
    {
       server = mg_get_user_data( ctx);

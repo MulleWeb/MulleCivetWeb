@@ -11,4 +11,71 @@ if( MULLE_TRACE_INCLUDE)
    message( STATUS "# Include \"${CMAKE_CURRENT_LIST_FILE}\"" )
 endif()
 
-# there are no libraries in the sourcetree
+#
+# Generated from sourcetree: 805A7B56-74C3-4679-8484-79E33EE82C4B;ws2_32;no-all-load,no-build,no-cmake-inherit,no-delete,no-dependency,no-fs,no-header,no-import,no-share,no-update,only-platform-windows;
+# Disable with : `mulle-sourcetree mark ws2_32 `
+# Disable for this platform: `mulle-sourcetree mark ws2_32 no-cmake-platform-${MULLE_UNAME}`
+# Disable for a sdk: `mulle-sourcetree mark ws2_32 no-cmake-sdk-<name>`
+#
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+   if( COLLECT_OS_SPECIFIC_LIBRARIES_AS_NAMES)
+      list( APPEND OS_SPECIFIC_LIBRARIES "ws2_32")
+   else()
+      if( NOT WS2_32_LIBRARY)
+         find_library( WS2_32_LIBRARY NAMES
+            ws2_32
+         )
+         message( STATUS "WS2_32_LIBRARY is ${WS2_32_LIBRARY}")
+         #
+         # The order looks ascending, but due to the way this file is read
+         # it ends up being descending, which is what we need.
+         #
+         if( WS2_32_LIBRARY)
+            #
+            # Add WS2_32_LIBRARY to OS_SPECIFIC_LIBRARIES list.
+            # Disable with: `mulle-sourcetree mark ws2_32 no-cmake-add`
+            #
+            list( APPEND OS_SPECIFIC_LIBRARIES ${WS2_32_LIBRARY})
+            # intentionally left blank
+         else()
+            # Disable with: `mulle-sourcetree mark ws2_32 no-require-link`
+            message( SEND_ERROR "WS2_32_LIBRARY was not found in ws2_32")
+         endif()
+      endif()
+   endif()
+endif()
+
+
+#
+# Generated from sourcetree: 8BB51C01-527C-43DD-9021-599297AA979F;winpthread;no-all-load,no-build,no-cmake-inherit,no-delete,no-dependency,no-fs,no-header,no-import,no-share,no-update,only-platform-windows;
+# Disable with : `mulle-sourcetree mark winpthread `
+# Disable for this platform: `mulle-sourcetree mark winpthread no-cmake-platform-${MULLE_UNAME}`
+# Disable for a sdk: `mulle-sourcetree mark winpthread no-cmake-sdk-<name>`
+#
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+   if( COLLECT_OS_SPECIFIC_LIBRARIES_AS_NAMES)
+      list( APPEND OS_SPECIFIC_LIBRARIES "winpthread")
+   else()
+      if( NOT WINPTHREAD_LIBRARY)
+         find_library( WINPTHREAD_LIBRARY NAMES
+            winpthread
+         )
+         message( STATUS "WINPTHREAD_LIBRARY is ${WINPTHREAD_LIBRARY}")
+         #
+         # The order looks ascending, but due to the way this file is read
+         # it ends up being descending, which is what we need.
+         #
+         if( WINPTHREAD_LIBRARY)
+            #
+            # Add WINPTHREAD_LIBRARY to OS_SPECIFIC_LIBRARIES list.
+            # Disable with: `mulle-sourcetree mark winpthread no-cmake-add`
+            #
+            list( APPEND OS_SPECIFIC_LIBRARIES ${WINPTHREAD_LIBRARY})
+            # intentionally left blank
+         else()
+            # Disable with: `mulle-sourcetree mark winpthread no-require-link`
+            message( SEND_ERROR "WINPTHREAD_LIBRARY was not found in winpthread")
+         endif()
+      endif()
+   endif()
+endif()

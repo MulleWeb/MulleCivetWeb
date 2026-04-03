@@ -13,6 +13,20 @@
 
 
 
+@interface DebugServer : MulleCivetWebServer
+@end
+
+@implementation DebugServer
+
+- (void) dealloc
+{
+   mulle_fprintf( stderr, "dealloc: before [super dealloc]\n");
+   [super dealloc];
+}
+
+@end
+
+
 static char  *options[] =
 {
    "num_threads", "1",
@@ -34,22 +48,26 @@ static void   test_noleak( void)
    {
       @try
       {
-         obj = [[[MulleCivetWebServer alloc] initWithCStringOptions:options] autorelease];
+         obj = [[[DebugServer alloc] initWithCStringOptions:options] autorelease];
          if( ! obj)
          {
-            fprintf( stderr, "failed to allocate\n");
+            mulle_fprintf( stderr, "failed to allocate\n");
             _exit( 1);
          }
       }
       @catch( NSException *localException)
       {
-         fprintf( stderr, "Threw a %s exception\n", [[localException name] UTF8String]);
+         mulle_fprintf( stderr, "Threw a %s exception\n", [[localException name] UTF8String]);
          _exit( 1);
       }
    }
 }
 
 
+static void   test_end( void)
+{
+   mulle_fprintf( stderr, "test is done\n");
+}
 
 
 int   main( int argc, char *argv[])
@@ -62,5 +80,6 @@ int   main( int argc, char *argv[])
 #endif
 
    test_noleak();
+   test_end();
    return( 0);
 }

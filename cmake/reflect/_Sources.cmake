@@ -26,5 +26,5 @@ src/civetweb/src/civetweb.c
 # contents selected with patternfile ??-source--stage2-sources
 #
 set( STAGE2_SOURCES
-src/MulleObjCLoader+MulleCivetWeb.m
+src/MulleObjCDeps+MulleCivetWeb.m
 )
