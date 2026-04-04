@@ -13,7 +13,7 @@
 #define _mulle_civet_web__provide_h__
 
 
-// no headers
+#include "civetweb.h"
 
 
 #endif
