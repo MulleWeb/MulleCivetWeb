@@ -14,6 +14,7 @@ set( INCLUDE_DIRS
 src/reflect
 src/generic
 src
+src/civetweb/include
 )
 
 #
@@ -69,6 +70,7 @@ src/MulleCivetWeb.h
 src/MulleObjCDeps+MulleCivetWeb.h
 src/NSURL+MulleCivetWeb.h
 src/NSURL+NSDictionary.h
+src/civetweb/include/civetweb.h
 src/reflect/_MulleCivetWeb-versioncheck.h
 )
 
