@@ -19,7 +19,6 @@ src/MulleCivetWebTextResponse.m
 src/MulleCivetWeb.m
 src/NSURL+MulleCivetWeb.m
 src/NSURL+NSDictionary.m
-src/civetweb/src/civetweb.c
 )
 
 #
