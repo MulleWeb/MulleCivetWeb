@@ -10,7 +10,7 @@
       repo="MulleCivetWeb";
       homepage="https://github.com/MulleWeb/MulleCivetWeb";
       license="BSD-3-Clause";
-      version="0.17.15";
+      version="0.17.16";
    };
    dependencies =
    (
