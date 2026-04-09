@@ -12,6 +12,11 @@
 #endif
 
 
+@interface MulleCivetWebResponse (Forward)
+- (instancetype) initWithHTTPVersion:(NSString *) version connection:(void *) connection;
+@end
+
+
 //
 // noleak checks for alloc/dealloc/finalize
 // and also load/unload initialize/deinitialize

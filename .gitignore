@@ -61,3 +61,4 @@ test/40_curled/pooldump-2.csv
 test/40_curled/pooldump-3.csv
 .roam
 .graveyard
+*.tmp.*

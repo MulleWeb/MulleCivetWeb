@@ -92,14 +92,18 @@ static char  *options[] =
 - (BOOL) curl:(MulleCurl *) curl
    parseBytes:(void *) bytes
        length:(NSUInteger) length
- {
-   printf( "%.*s\n", (int) length, bytes);
+{
+   MULLE_C_UNUSED( curl);
+
+   printf( "%.*s\n", (int) length, (char *) bytes);
    return( YES);  // always happy
 }
 
 
 - (id) parsedObjectWithCurl:(MulleCurl *) curl
 {
+   MULLE_C_UNUSED( curl);
+
    return( nil);
 }
 
