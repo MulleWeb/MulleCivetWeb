@@ -1,11 +1,12 @@
 {
    "name" : "MulleCivetWeb",
-   "version" : "0.17.15",
+   "version" : "0.17.16",
    "description" : "🦊 HTTP Server for mulle-objc",
    "keywords" : [],
    "license" : "BSD-3-Clause",
    "repo" : "MulleWeb/MulleCivetWeb",
    "src" : [
+      "asset/dox/TOC.md",
       "src/civetweb/include/civetweb.h",
       "src/civetweb/src/civetweb.c",
       "src/generic/import-private.h",

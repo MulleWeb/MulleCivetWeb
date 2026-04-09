@@ -23,7 +23,7 @@ static char  *options[] =
    NSData   *headerData;
 
    headerData = [self headerDataUsingEncoding:NSUTF8StringEncoding];
-   printf( "%.*s", (int) [headerData length], [headerData bytes]);
+   printf( "%.*s", (int) [headerData length], (char *) [headerData bytes]);
 }
 
 - (void) sendContentData
@@ -31,7 +31,7 @@ static char  *options[] =
    NSData   *contentData;
 
    contentData = [self contentData];
-   printf( "%.*s", (int) [contentData length], [contentData bytes]);
+   printf( "%.*s", (int) [contentData length], (char *) [contentData bytes]);
 
 }
 
