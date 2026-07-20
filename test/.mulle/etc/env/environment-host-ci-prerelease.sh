@@ -35,6 +35,24 @@ export MULLE_CIVET_WEB_BRANCH="prerelease"
 
 
 #
+# MulleFoundation-startup nodetype: ${MULLE_FOUNDATION__STARTUP_NODETYPE:-tar}
+#
+export MULLE_FOUNDATION__STARTUP_NODETYPE="git"
+
+
+#
+# MulleFoundation-startup url: ${MULLE_FOUNDATION__STARTUP_URL:-https://github.com/MulleFoundation/MulleFoundation-startup/archive/${MULLE_TAG}.tar.gz}
+#
+export MULLE_FOUNDATION__STARTUP_URL="https://github.com/MulleFoundation/MulleFoundation-startup.git"
+
+
+#
+# MulleFoundation-startup branch: ${MULLE_FOUNDATION__STARTUP_BRANCH}
+#
+export MULLE_FOUNDATION__STARTUP_BRANCH="prerelease"
+
+
+#
 # mulle-testallocator nodetype: ${MULLE__TESTALLOCATOR_NODETYPE:-tar}
 #
 export MULLE__TESTALLOCATOR_NODETYPE="git"
