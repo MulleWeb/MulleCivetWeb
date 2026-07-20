@@ -1,3 +1,7 @@
+### 0.17.17
+
+Various small improvements
+
 ### 0.17.16
 
 
