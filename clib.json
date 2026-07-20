@@ -1,6 +1,6 @@
 {
    "name" : "MulleCivetWeb",
-   "version" : "0.17.16",
+   "version" : "0.17.17",
    "description" : "🦊 HTTP Server for mulle-objc",
    "keywords" : [],
    "license" : "BSD-3-Clause",
