@@ -106,7 +106,7 @@
 
 
 
-@interface MulleCivetWebServer(Future)
+@interface MulleCivetWebServer(Future) < MulleObjCFuture>
 
 - (void) log:(NSString *) format, ...     MULLE_OBJC_THREADSAFE_METHOD;
 
