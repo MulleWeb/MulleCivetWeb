@@ -4,6 +4,7 @@
       { @selector( MulleCivetWebRequest), @selector( Private) },      // 40de10e7;MulleCivetWebRequest;01f2cacd;Private
       { @selector( MulleCivetWebRequest), MULLE_OBJC_NO_CATEGORYID },      // 40de10e7;MulleCivetWebRequest;;
       { @selector( MulleCivetWebResponse), MULLE_OBJC_NO_CATEGORYID },      // f07fcd21;MulleCivetWebResponse;;
+      { @selector( MulleCivetWebResponseStream), MULLE_OBJC_NO_CATEGORYID },      // e0fa12a0;MulleCivetWebResponseStream;;
       { @selector( MulleCivetWebServer), MULLE_OBJC_NO_CATEGORYID },      // 7d0338e7;MulleCivetWebServer;;
       { @selector( MulleCivetWebTextResponse), MULLE_OBJC_NO_CATEGORYID },      // 717eadd0;MulleCivetWebTextResponse;;
       { @selector( NSDictionary), @selector( NSDictionaryPercentEncodedPrinter) },      // 8b2abcad;NSDictionary;166fe095;NSDictionaryPercentEncodedPrinter

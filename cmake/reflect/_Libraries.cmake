@@ -22,25 +22,31 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
       list( APPEND OS_SPECIFIC_LIBRARIES "ws2_32")
    else()
       if( NOT WS2_32_LIBRARY)
-         find_library( WS2_32_LIBRARY NAMES
-            ws2_32
-         )
+         foreach( _TMP_WS2_32_LIBRARY_TARGET ws2_32)
+            if( TARGET ${_TMP_WS2_32_LIBRARY_TARGET})
+               set( WS2_32_LIBRARY ${_TMP_WS2_32_LIBRARY_TARGET})
+               break()
+            endif()
+         endforeach()
+         if( NOT WS2_32_LIBRARY)
+            find_library( WS2_32_LIBRARY NAMES
+               ws2_32
+            )
+         endif()
          message( STATUS "WS2_32_LIBRARY is ${WS2_32_LIBRARY}")
-         #
-         # The order looks ascending, but due to the way this file is read
-         # it ends up being descending, which is what we need.
-         #
-         if( WS2_32_LIBRARY)
+      endif()
+      if( WS2_32_LIBRARY)
             #
             # Add WS2_32_LIBRARY to OS_SPECIFIC_LIBRARIES list.
             # Disable with: `mulle-sourcetree mark ws2_32 no-cmake-add`
             #
-            list( APPEND OS_SPECIFIC_LIBRARIES ${WS2_32_LIBRARY})
+            if( NOT ${WS2_32_LIBRARY} IN_LIST OS_SPECIFIC_LIBRARIES)
+               list( APPEND OS_SPECIFIC_LIBRARIES ${WS2_32_LIBRARY})
+            endif()
             # intentionally left blank
-         else()
-            # Disable with: `mulle-sourcetree mark ws2_32 no-require-link`
-            message( SEND_ERROR "WS2_32_LIBRARY was not found in ws2_32")
-         endif()
+      else()
+         # Disable with: `mulle-sourcetree mark ws2_32 no-require-link`
+         message( SEND_ERROR "WS2_32_LIBRARY was not found in ws2_32")
       endif()
    endif()
 endif()
@@ -57,25 +63,31 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
       list( APPEND OS_SPECIFIC_LIBRARIES "winpthread")
    else()
       if( NOT WINPTHREAD_LIBRARY)
-         find_library( WINPTHREAD_LIBRARY NAMES
-            winpthread
-         )
+         foreach( _TMP_WINPTHREAD_LIBRARY_TARGET winpthread)
+            if( TARGET ${_TMP_WINPTHREAD_LIBRARY_TARGET})
+               set( WINPTHREAD_LIBRARY ${_TMP_WINPTHREAD_LIBRARY_TARGET})
+               break()
+            endif()
+         endforeach()
+         if( NOT WINPTHREAD_LIBRARY)
+            find_library( WINPTHREAD_LIBRARY NAMES
+               winpthread
+            )
+         endif()
          message( STATUS "WINPTHREAD_LIBRARY is ${WINPTHREAD_LIBRARY}")
-         #
-         # The order looks ascending, but due to the way this file is read
-         # it ends up being descending, which is what we need.
-         #
-         if( WINPTHREAD_LIBRARY)
+      endif()
+      if( WINPTHREAD_LIBRARY)
             #
             # Add WINPTHREAD_LIBRARY to OS_SPECIFIC_LIBRARIES list.
             # Disable with: `mulle-sourcetree mark winpthread no-cmake-add`
             #
-            list( APPEND OS_SPECIFIC_LIBRARIES ${WINPTHREAD_LIBRARY})
+            if( NOT ${WINPTHREAD_LIBRARY} IN_LIST OS_SPECIFIC_LIBRARIES)
+               list( APPEND OS_SPECIFIC_LIBRARIES ${WINPTHREAD_LIBRARY})
+            endif()
             # intentionally left blank
-         else()
-            # Disable with: `mulle-sourcetree mark winpthread no-require-link`
-            message( SEND_ERROR "WINPTHREAD_LIBRARY was not found in winpthread")
-         endif()
+      else()
+         # Disable with: `mulle-sourcetree mark winpthread no-require-link`
+         message( SEND_ERROR "WINPTHREAD_LIBRARY was not found in winpthread")
       endif()
    endif()
 endif()
