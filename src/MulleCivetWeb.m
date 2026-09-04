@@ -2,10 +2,9 @@
 //  MulleCivetWeb.m
 //  MulleCivetWeb
 //
-//  Created by Nat! on 02.03.13.
-//
-//  Copyright (c) 2013 Nat! - Mulle kybernetiK
+//  Copyright (c) 2020 Nat! - Mulle kybernetiK.
 //  All rights reserved.
+//
 //
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:

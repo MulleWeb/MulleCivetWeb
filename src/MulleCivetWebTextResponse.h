@@ -2,10 +2,9 @@
 //  MulleCivetWebTextResponse.h
 //  MulleCivetWeb
 //
-//  Created by Nat! on 21.03.20.
-//
-//  Copyright (c) 2020 Nat! - Mulle kybernetiK
+//  Copyright (c) 2020 Nat! - Mulle kybernetiK.
 //  All rights reserved.
+//
 //
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:

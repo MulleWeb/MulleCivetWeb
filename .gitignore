@@ -64,3 +64,6 @@ test/40_curled/pooldump-3.csv
 *.tmp.*
 *.test.*
 .idea
+.kiro
+TODO.md
+REVIEW.md

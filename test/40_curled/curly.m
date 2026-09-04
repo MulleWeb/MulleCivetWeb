@@ -119,7 +119,7 @@ static int    sendRequest( NSThread *thread, id server)
       mulle_fprintf( stderr, "no data\n");
    mulle_printf( "%.*s\n", (int) [data length], [data bytes]);
 
-   MulleObjCDumpAutoreleasePoolsToFile( "pooldump-1.csv");
+   // MulleObjCDumpAutoreleasePoolsToFile( "pooldump-1.csv");
    return( 0);
 }
 
@@ -181,11 +181,11 @@ int   main( int argc, char *argv[])
       // indefinetely
    }
 
-   MulleObjCDumpAutoreleasePoolsToFile( "pooldump-2.csv");
+   // MulleObjCDumpAutoreleasePoolsToFile( "pooldump-2.csv");
 
    [server mullePerformFinalize];
 
-   MulleObjCDumpAutoreleasePoolsToFile( "pooldump-3.csv");
+   // MulleObjCDumpAutoreleasePoolsToFile( "pooldump-3.csv");
 
    return( 0);
 }

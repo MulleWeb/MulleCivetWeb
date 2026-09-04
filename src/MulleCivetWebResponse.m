@@ -1,11 +1,10 @@
 //
-//  MulleCivetWebResponse.h
+//  MulleCivetWebResponse.m
 //  MulleCivetWeb
 //
-//  Created by Nat! on 02.02.20.
-//
-//  Copyright (c) 2020 Nat! - Mulle kybernetiK
+//  Copyright (c) 2020 Nat! - Mulle kybernetiK.
 //  All rights reserved.
+//
 //
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:
@@ -44,6 +43,46 @@
 
 
 #define RESPONSE_DEBUG
+
+
+//
+// Private stream subclass used by MulleCivetWebResponse. A buffered output
+// stream flushes remaining bytes in -finalize. Since -finalize can run
+// during autorelease pool drain, and our sink (MulleCivetWebResponse)
+// raises "remote client shut down ?" when the peer has disconnected, an
+// uncaught exception there would abort() the process. This subclass
+// swallows that exception: a dead client during teardown is a normal,
+// unrecoverable condition, not a programming error. We keep this policy
+// local to the web layer instead of the generic MulleObjCBufferedOutputStream.
+//
+@interface MulleCivetWebResponseStream : MulleObjCBufferedOutputStream
+@end
+
+
+@implementation MulleCivetWebResponseStream
+
+- (void) finalize
+{
+   //
+   // Guard the flush. If the remote client is gone, the sink write raises.
+   // We swallow it here. The base -finalize below flushes once more, but the
+   // sink (MulleCivetWebResponse) has NULLed its connection on the first
+   // failure, so that second flush is a silent no-op. Then teardown completes
+   // normally.
+   //
+   @try
+   {
+      [self flush];
+   }
+   @catch( NSException *localException)
+   {
+      // remote client is gone - nothing to recover
+   }
+
+   [super finalize];
+}
+
+@end
 
 
 @implementation MulleCivetWebResponse
@@ -242,6 +281,14 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 {
    int   rval;
 
+   //
+   // Connection may have been NULLed by mulleWriteBytes:length: after a
+   // failed write. This guard prevents a crash when the stream is flushed
+   // during autorelease pool drain after the client disconnected.
+   //
+   if( ! _connection)
+      return( NO);
+
    NSParameterAssert( [self hasSentHeader]);
 
 #ifdef RESPONSE_DEBUG
@@ -348,8 +395,8 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
    // https://stackoverflow.com/questions/1098897/what-is-the-largest-safe-udp-packet-size-on-the-internet?noredirect=1
    // astara/maupin. 1200 looks OK as we would like to emit a
    // pretty full packet as early as possible here
-   stream = [[[MulleObjCBufferedOutputStream alloc] initWithOutputStream:self
-                                                              bufferSize:1200] autorelease];
+   stream = [[[MulleCivetWebResponseStream alloc] initWithOutputStream:self
+                                                            bufferSize:1200] autorelease];
    _hasCreatedStream = YES;
    return( stream);
 }
@@ -364,12 +411,22 @@ static void   appendHTTPHeaderToDataUsingEncoding( NSMutableData *data,
 }
 
 
+//
+// When the remote client disconnects mid-response, mg_send_chunk fails.
+// We NULL _connection so that subsequent writes (e.g. from MulleObjCBuffered-
+// OutputStream's -finalize -> -flush during @autoreleasepool drain) silently
+// return instead of raising an uncaught exception that would abort().
+//
 - (void) mulleWriteBytes:(void *) bytes
                   length:(NSUInteger) length
 {
+   if( ! _connection)
+      return;
+
    if( ! [self sendChunkedContentBytes:bytes
                                 length:length])
    {
+      _connection = NULL;
       [NSException raise:NSInternalInconsistencyException
                   format:@"remote client shut down ?"];
    }
