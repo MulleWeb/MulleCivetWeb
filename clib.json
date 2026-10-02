@@ -42,8 +42,7 @@
    ],
    "dependencies" : {
       "MulleWeb/civetweb": "*",
-      "MulleWeb/MulleObjCHTTPFoundation": "*",
-      "MulleFoundation/MulleFoundation": "*",
-      "mulle-objc/mulle-objc-list": "*"
+      "MulleWeb/MulleWebFoundation": "*",
+      "mulle-objc/mulle-objc-tools": "*"
    }
 }

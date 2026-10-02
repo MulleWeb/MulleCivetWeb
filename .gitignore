@@ -67,3 +67,10 @@ test/40_curled/pooldump-3.csv
 .kiro
 TODO.md
 REVIEW.md
+.vscode/
+*.old
+.touch
+*.orig
+*.workspace
+*.*-workspace
+research/
