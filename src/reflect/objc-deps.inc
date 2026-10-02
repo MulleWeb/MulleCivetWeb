@@ -1,5 +1,4 @@
-      { @selector( MulleObjCDeps), @selector( MulleFoundation) },      // 3c20656f;MulleObjCDeps;46ed3b36;MulleFoundation
-      { @selector( MulleObjCDeps), @selector( MulleObjCHTTPFoundation) },      // 3c20656f;MulleObjCDeps;457d3115;MulleObjCHTTPFoundation
+      { @selector( MulleObjCDeps), @selector( MulleWebFoundation) },      // 3c20656f;MulleObjCDeps;1bc28b1e;MulleWebFoundation
       { @selector( MulleCivetWebRequest), @selector( NSURL) },      // 40de10e7;MulleCivetWebRequest;6b1e8f73;NSURL
       { @selector( MulleCivetWebRequest), @selector( Private) },      // 40de10e7;MulleCivetWebRequest;01f2cacd;Private
       { @selector( MulleCivetWebRequest), MULLE_OBJC_NO_CATEGORYID },      // 40de10e7;MulleCivetWebRequest;;

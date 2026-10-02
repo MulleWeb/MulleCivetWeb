@@ -15,20 +15,20 @@
    dependencies =
    (
       {
+         description="🧱 MulleFoundation amalgamates Foundations projects";
+         domain="github";
+         name="MulleFoundation";
+         repo="MulleFoundation";
+         url="https://github.com/MulleFoundation/MulleFoundation";
+         user="MulleFoundation";
+      },
+      {
          description="🎫 HTTP and HTML utility methods and classes for mulle-objc";
          domain="github";
          name="MulleObjCHTTPFoundation";
          repo="MulleObjCHTTPFoundation";
          url="https://github.com/MulleWeb/MulleObjCHTTPFoundation";
          user="MulleWeb";
-      },
-      {
-         description="💍 Umbrella library for the MulleFoundation";
-         domain="github";
-         name="MulleFoundation";
-         repo="MulleFoundation";
-         url="https://github.com/MulleFoundation/MulleFoundation";
-         user="MulleFoundation";
       },
       {
          description="📒 Lists mulle-objc runtime information contained in executables.";
@@ -42,7 +42,7 @@
    embedded =
    (
       {
-         description="=======";
+         description="![CivetWeb](/resources/civetweb_64x64.png \"CivetWeb\") CivetWeb";
          domain="github";
          name="src/civetweb";
          repo="civetweb";
