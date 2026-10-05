@@ -25,8 +25,8 @@ Key high-level features:
   `MULLE_OBJC_THREADSAFE_METHOD` contract points.
 
 It is a component of the MulleWeb universe and depends on
-`MulleObjCHTTPFoundation` (HTTP enums, header keys, status text) and
-`MulleFoundation`. It vendors `civetweb` (a fork of Mongoose) as a
+`MulleWebFoundation` (foundation plus HTTP enums, header keys, status text).
+It vendors `civetweb` (a fork of Mongoose) as a
 no-build, no-link source dependency.
 
 ## 2. Key Concepts & Design Philosophy
@@ -69,7 +69,7 @@ All signatures below are copied verbatim from the public headers in `src/`.
 ### 3.1. `MulleCivetWeb.h` — version numbers
 
 ```c
-#define MULLE_CIVET_WEB_VERSION  ((0UL << 20) | (17 << 8) | 18)
+#define MULLE_CIVET_WEB_VERSION  ((0UL << 20) | (17 << 8) | 19)
 
 static inline unsigned int   MulleCivetWeb_get_version_major( void)
 static inline unsigned int   MulleCivetWeb_get_version_minor( void)
@@ -77,7 +77,7 @@ static inline unsigned int   MulleCivetWeb_get_version_patch( void)
 extern uint32_t   MulleCivetWeb_get_version( void);
 ```
 
-- Version is packed `(major << 20) | (minor << 8) | patch`, currently 0.17.18.
+- Version is packed `(major << 20) | (minor << 8) | patch`, currently 0.17.19.
 - `MulleCivetWeb_get_version()` is the runtime callable counterpart of the
   macro; the `_major/_minor/_patch` accessors unpack it.
 - This header also `#import`s every other public header, so
@@ -672,12 +672,13 @@ int   main( void)
 
 Direct `mulle-sde` dependencies (from `.mulle/etc/sourcetree/config`):
 
-- `MulleObjCHTTPFoundation` — HTTP enums (`MulleHTTPRequestMethod`), header
-  keys (`MulleHTTPContentTypeKey`, `MulleHTTPAcceptEncodingKey`,
-  `MulleHTTPContentLengthKey`, `MulleHTTPDateKey`, ...), transfer-encoding
-  constants (`MulleHTTPTransferEncodingChunked`), date formatting, NSURL.
-- `MulleFoundation` — umbrella foundation (NSString, NSData,
-  NSDictionary/NSMutableDictionary, NSArray, NSDate, exceptions, threads).
+- `MulleWebFoundation` — foundation plus web/HTTP support: HTTP enums
+  (`MulleHTTPRequestMethod`), header keys (`MulleHTTPContentTypeKey`,
+  `MulleHTTPAcceptEncodingKey`, `MulleHTTPContentLengthKey`,
+  `MulleHTTPDateKey`, ...), transfer-encoding constants
+  (`MulleHTTPTransferEncodingChunked`), date formatting, NSURL, and the
+  foundation classes (NSString, NSData, NSDictionary/NSMutableDictionary,
+  NSArray, NSDate, exceptions, threads).
 - `mulle-objc-list` — build-time/runtime object list handling.
 - `civetweb` — vendored C HTTP server (source-only, no build/no-link/
   no-header dependency; linked in as part of this library).
