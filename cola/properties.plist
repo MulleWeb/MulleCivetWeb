@@ -10,32 +10,23 @@
       repo="MulleCivetWeb";
       homepage="https://github.com/MulleWeb/MulleCivetWeb";
       license="BSD-3-Clause";
-      version="0.17.19";
    };
    dependencies =
    (
       {
-         description="🧱 MulleFoundation amalgamates Foundations projects";
+         description="🛸 MulleWebFoundation does something";
          domain="github";
-         name="MulleFoundation";
-         repo="MulleFoundation";
-         url="https://github.com/MulleFoundation/MulleFoundation";
-         user="MulleFoundation";
-      },
-      {
-         description="🎫 HTTP and HTML utility methods and classes for mulle-objc";
-         domain="github";
-         name="MulleObjCHTTPFoundation";
-         repo="MulleObjCHTTPFoundation";
-         url="https://github.com/MulleWeb/MulleObjCHTTPFoundation";
+         name="MulleWebFoundation";
+         repo="MulleWebFoundation";
+         url="https://github.com/MulleWeb/MulleWebFoundation";
          user="MulleWeb";
       },
       {
          description="📒 Lists mulle-objc runtime information contained in executables.";
          domain="github";
-         name="mulle-objc-list";
-         repo="mulle-objc-list";
-         url="https://github.com/mulle-objc/mulle-objc-list";
+         name="mulle-objc-tools";
+         repo="mulle-objc-tools";
+         url="https://github.com/mulle-objc/mulle-objc-tools";
          user="mulle-objc";
       }
    );

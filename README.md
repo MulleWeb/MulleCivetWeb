@@ -118,9 +118,8 @@ Install the requirements:
 
 | Requirements                                 | Description
 |----------------------------------------------|-----------------------
-| [MulleFoundation](https://github.com/MulleFoundation/MulleFoundation)             | 🧱 MulleFoundation amalgamates Foundations projects
-| [MulleObjCHTTPFoundation](https://github.com/MulleWeb/MulleObjCHTTPFoundation)             | 🎫 HTTP and HTML utility methods and classes for mulle-objc
-| [mulle-objc-list](https://github.com/mulle-objc/mulle-objc-list)             | 📒 Lists mulle-objc runtime information contained in executables.
+| [MulleWebFoundation](https://github.com/MulleWeb/MulleWebFoundation)             | 🛸 MulleWebFoundation does something
+| [mulle-objc-tools](https://github.com/mulle-objc/mulle-objc-tools)             | 📒 Lists mulle-objc runtime information contained in executables.
 
 Download the latest [tar](https://github.com/MulleWeb/MulleCivetWeb/archive/refs/tags/latest.tar.gz) or [zip](https://github.com/MulleWeb/MulleCivetWeb/archive/refs/tags/latest.zip) archive and unpack it.
 
