@@ -2,6 +2,17 @@
 
 
 
+
+
+
+
+* document replacement of MulleObjCHTTPFoundation and MulleFoundation with the unified MulleWebFoundation dependency
+* clarify that MulleWebFoundation bundles the foundation classes alongside HTTP enums, header keys, status text, and NSURL support
+* note current API version is 0.17.19
+
+
+
+
 * document replacement of MulleObjCHTTPFoundation and MulleFoundation with the unified MulleWebFoundation dependency
 * clarify that MulleWebFoundation bundles the foundation classes alongside HTTP enums, header keys, status text, and NSURL support
 * note current API version is 0.17.19
